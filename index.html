@@ -69,19 +69,31 @@
       </div>
     </section>
 
-    <!-- TAB 2: LAPORAN (DENGAN FILTER & LAPORAN KEUANGAN RAPIH) -->
+    <!-- TAB 2: LAPORAN -->
     <section id="page-laporan" class="hidden space-y-4">
       <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3 no-print">
         <h2 class="text-sm font-bold text-gray-800"><i class="fa-solid fa-filter text-emerald-600"></i> Filter & Laporan Keuangan</h2>
         
         <div>
           <label class="block text-xs font-semibold text-gray-600 mb-1">Periode Waktu</label>
-          <select id="reportPeriod" class="w-full p-2.5 border rounded-xl text-xs bg-gray-50" onchange="renderLaporanView()">
+          <select id="reportPeriod" class="w-full p-2.5 border rounded-xl text-xs bg-gray-50 mb-2" onchange="toggleCustomDate(this.value)">
             <option value="all">Semua Waktu</option>
             <option value="this-month">Bulan Ini</option>
             <option value="last-month">Bulan Lalu</option>
             <option value="this-year">Tahun Ini</option>
+            <option value="custom">Rentang Waktu Kustom</option>
           </select>
+          
+          <div id="customDateContainer" class="hidden grid grid-cols-2 gap-2 mt-2">
+            <div>
+              <label class="block text-[10px] text-gray-500">Dari Tanggal</label>
+              <input type="date" id="startDate" class="w-full p-2 border rounded-xl text-xs bg-gray-50" onchange="renderLaporanView()">
+            </div>
+            <div>
+              <label class="block text-[10px] text-gray-500">Sampai Tanggal</label>
+              <input type="date" id="endDate" class="w-full p-2 border rounded-xl text-xs bg-gray-50" onchange="renderLaporanView()">
+            </div>
+          </div>
         </div>
 
         <div>
@@ -101,19 +113,15 @@
         </div>
       </div>
 
-      <!-- Area Cetak & Tampilan Laporan Keuangan Rapi Per Rekening -->
       <div id="printArea" class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-4">
         <div class="text-center border-b pb-3">
           <h2 class="text-base font-bold text-gray-800">Laporan Keuangan Per Rekening</h2>
           <p id="reportSubTitle" class="text-xs text-gray-500">Semua Waktu • Semua Rekening</p>
         </div>
         
-        <div id="reportStructuredContainer" class="space-y-4 text-xs">
-          <!-- Diisi otomatis oleh JavaScript -->
-        </div>
+        <div id="reportStructuredContainer" class="space-y-4 text-xs"></div>
       </div>
 
-      <!-- Charts Visual -->
       <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3 no-print">
         <h2 class="text-sm font-bold text-gray-800"><i class="fa-solid fa-chart-pie text-emerald-600"></i> Saldo Antar Rekening</h2>
         <div class="relative h-48 w-full flex justify-center items-center">
@@ -132,37 +140,31 @@
     <!-- TAB 3: PENGATURAN -->
     <section id="page-pengaturan" class="hidden space-y-4">
       <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 space-y-4">
-        <h2 class="text-base font-bold text-gray-800"><i class="fa-solid fa-gear text-emerald-600"></i> Master Data</h2>
-        
-        <div class="p-3 bg-gray-50 rounded-xl space-y-3">
-          <p class="text-xs font-semibold text-gray-600">Tambah Rekening / Kategori Manual</p>
-          <div class="grid grid-cols-2 gap-2">
-            <select id="masterJenis" class="p-2 border rounded-lg text-xs bg-white">
-              <option value="rekening">Rekening / Akun</option>
-              <option value="kategoriMasuk">Kategori Pemasukan</option>
-              <option value="kategoriKeluar">Kategori Pengeluaran</option>
-            </select>
-            <input type="text" id="masterNama" placeholder="Nama..." class="p-2 border rounded-lg text-xs bg-white">
-          </div>
-          <button onclick="tambahMaster()" class="w-full bg-emerald-600 text-white text-xs font-bold py-2 rounded-lg hover:bg-emerald-700">
-            + Tambah Master
-          </button>
+        <div class="flex justify-between items-center border-b pb-2">
+          <h2 class="text-base font-bold text-gray-800"><i class="fa-solid fa-gear text-emerald-600"></i> Master Data</h2>
+          <span class="text-xs text-gray-400">Kelola Akun & Kategori</span>
         </div>
-
-        <div id="masterList" class="space-y-3 text-sm pt-2">
-          <!-- List Master Data -->
-        </div>
+        <div id="masterList" class="space-y-3 text-sm pt-1"></div>
       </div>
     </section>
 
   </main>
 
+  <!-- TOMBOL TAMBAH TRANSAKSI (+) -->
   <div id="fabContainer" class="fixed bottom-20 right-5 z-40 no-print">
     <button onclick="toggleActionMenu()" class="w-14 h-14 bg-emerald-600 text-white rounded-full shadow-lg flex items-center justify-center text-2xl hover:bg-emerald-700 focus:outline-none transition-transform active:scale-95">
       <i id="fabIcon" class="fa-solid fa-plus transition-transform duration-300"></i>
     </button>
   </div>
 
+  <!-- TOMBOL TAMBAH MASTER DATA (+) KHUSUS TAB PENGATURAN -->
+  <div id="fabMasterContainer" class="fixed bottom-20 right-5 z-40 no-print hidden">
+    <button onclick="openMasterForm()" class="w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center text-2xl hover:bg-blue-700 focus:outline-none transition-transform active:scale-95">
+      <i class="fa-solid fa-plus"></i>
+    </button>
+  </div>
+
+  <!-- POPUP OPSI TRANSAKSI -->
   <div id="actionMenu" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-30 hidden flex flex-col justify-end p-5 pb-24 space-y-3 no-print">
     <div class="max-w-md mx-auto w-full space-y-3">
       <button onclick="openForm('Pemasukan')" class="w-full bg-white p-4 rounded-2xl shadow-lg flex items-center justify-between text-emerald-600 font-bold active:bg-emerald-50">
@@ -180,6 +182,39 @@
     </div>
   </div>
 
+  <!-- MODAL FORM TAMBAH/EDIT MASTER DATA -->
+  <div id="modalMasterForm" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4 no-print">
+    <div class="bg-white rounded-2xl w-full max-w-md p-5 space-y-4">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 id="masterFormTitle" class="font-bold text-lg text-gray-800">Tambah Master Data</h3>
+        <button onclick="closeMasterForm()" class="text-gray-400 hover:text-gray-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form id="masterForm" onsubmit="handleMasterFormSubmit(event)" class="space-y-3 text-sm">
+        <input type="hidden" id="masterOldNama">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Jenis Master</label>
+          <select id="masterJenis" class="w-full p-2.5 border rounded-xl text-xs bg-gray-50">
+            <option value="rekening">Rekening / Akun</option>
+            <option value="kategoriMasuk">Kategori Pemasukan</option>
+            <option value="kategoriKeluar">Kategori Pengeluaran</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Nama Baru</label>
+          <input type="text" id="masterNama" placeholder="Nama..." required class="w-full p-2.5 border rounded-xl bg-gray-50">
+        </div>
+
+        <div class="pt-2 flex gap-2">
+          <button type="button" onclick="closeMasterForm()" class="w-1/2 py-2.5 border rounded-xl text-gray-600 font-semibold">Batal</button>
+          <button type="submit" class="w-1/2 py-2.5 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL FORM TRANSAKSI -->
   <div id="modalForm" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4 no-print">
     <div class="bg-white rounded-2xl w-full max-w-md p-5 space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b pb-3">
@@ -310,12 +345,18 @@
       activeNav.classList.remove('text-gray-400');
       activeNav.classList.add('text-emerald-600');
 
+      // Pengaturan Tombol Melayang (FAB)
       const fab = document.getElementById('fabContainer');
+      const fabMaster = document.getElementById('fabMasterContainer');
+      
+      fab.classList.add('hidden');
+      fabMaster.classList.add('hidden');
+      document.getElementById('actionMenu').classList.add('hidden');
+
       if (tab === 'transaksi') {
         fab.classList.remove('hidden');
-      } else {
-        fab.classList.add('hidden');
-        document.getElementById('actionMenu').classList.add('hidden');
+      } else if (tab === 'pengaturan') {
+        fabMaster.classList.remove('hidden');
       }
 
       if (tab === 'laporan') {
@@ -330,6 +371,50 @@
       icon.classList.toggle('rotate-45');
     }
 
+    // Modal Master Form (Tambah / Edit)
+    function openMasterForm(jenis = 'rekening', namaLama = '') {
+      document.getElementById('masterForm').reset();
+      const titleEl = document.getElementById('masterFormTitle');
+      const jenisEl = document.getElementById('masterJenis');
+      const namaEl = document.getElementById('masterNama');
+      const oldNamaEl = document.getElementById('masterOldNama');
+
+      if (namaLama) {
+        titleEl.innerText = "Edit Master Data";
+        jenisEl.value = jenis;
+        jenisEl.disabled = true; // Jenis tidak boleh diubah saat edit
+        namaEl.value = namaLama;
+        oldNamaEl.value = namaLama;
+      } else {
+        titleEl.innerText = "Tambah Master Data";
+        jenisEl.disabled = false;
+        oldNamaEl.value = "";
+      }
+      document.getElementById('modalMasterForm').classList.remove('hidden');
+    }
+
+    function closeMasterForm() {
+      document.getElementById('modalMasterForm').classList.add('hidden');
+    }
+
+    function handleMasterFormSubmit(e) {
+      e.preventDefault();
+      const jenis = document.getElementById('masterJenis').value;
+      const nama = document.getElementById('masterNama').value.trim();
+      const oldNama = document.getElementById('masterOldNama').value;
+
+      if(!nama) return alert('Nama tidak boleh kosong');
+
+      if (oldNama) {
+        // Edit / Update Master
+        postToBackend('editMaster', { jenis, oldNama, newNama: nama });
+      } else {
+        // Tambah Master Baru
+        postToBackend('simpanMaster', { jenis, nama });
+      }
+      closeMasterForm();
+    }
+
     function renderMasterOptions() {
       document.getElementById('listRekening').innerHTML = dbMaster.rekening.map(r => `<option value="${r}">`).join('');
     }
@@ -341,14 +426,17 @@
 
     function renderMasterList() {
       const list = document.getElementById('masterList');
-      let html = '<div class="space-y-3">';
+      let html = '<div class="space-y-4">';
       const renderSec = (title, items, jenis) => {
-        let sec = `<div class="space-y-1"><p class="text-xs font-bold text-gray-500">${title}:</p>`;
+        let sec = `<div class="space-y-1.5"><p class="text-xs font-bold text-gray-500 uppercase tracking-wider">${title}:</p>`;
         if(items.length === 0) sec += `<p class="text-xs text-gray-400 italic">Belum ada data</p>`;
         items.forEach((i) => {
-          sec += `<div class="flex justify-between items-center bg-gray-50 p-2 rounded-xl text-xs border border-gray-100">
+          sec += `<div class="flex justify-between items-center bg-gray-50 p-2.5 rounded-xl text-xs border border-gray-100">
             <span class="font-medium text-gray-700">${i}</span>
-            <button onclick="hapusMaster('${jenis}', '${i}')" class="text-red-500 px-1"><i class="fa-solid fa-trash"></i></button>
+            <div class="flex gap-2">
+              <button onclick="openMasterForm('${jenis}', '${i}')" class="text-blue-500 hover:text-blue-700 px-1"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="hapusMaster('${jenis}', '${i}')" class="text-red-500 hover:text-red-700 px-1"><i class="fa-solid fa-trash"></i></button>
+            </div>
           </div>`;
         });
         return sec + `</div>`;
@@ -358,14 +446,6 @@
       html += renderSec('Kategori Pengeluaran', dbMaster.kategoriKeluar, 'kategoriKeluar');
       html += '</div>';
       list.innerHTML = html;
-    }
-
-    function tambahMaster() {
-      const jenis = document.getElementById('masterJenis').value;
-      const nama = document.getElementById('masterNama').value.trim();
-      if(!nama) return alert('Nama tidak boleh kosong');
-      postToBackend('simpanMaster', { jenis, nama });
-      document.getElementById('masterNama').value = '';
     }
 
     function hapusMaster(jenis, nama) {
@@ -475,6 +555,16 @@
       }
     }
 
+    function toggleCustomDate(val) {
+      const container = document.getElementById('customDateContainer');
+      if (val === 'custom') {
+        container.classList.remove('hidden');
+      } else {
+        container.classList.add('hidden');
+      }
+      renderLaporanView();
+    }
+
     function filterExportData() {
       const period = document.getElementById('reportPeriod').value;
       const rek = document.getElementById('reportRekening').value;
@@ -484,6 +574,7 @@
         const tDate = new Date(t.tanggal);
         let matchRek = (rek === 'all' || t.rekAsal === rek || t.rekTujuan === rek);
         let matchPeriod = true;
+
         if (period === 'this-month') {
           matchPeriod = (tDate.getMonth() === now.getMonth() && tDate.getFullYear() === now.getFullYear());
         } else if (period === 'last-month') {
@@ -491,12 +582,17 @@
           matchPeriod = (tDate.getMonth() === lastMonth.getMonth() && tDate.getFullYear() === lastMonth.getFullYear());
         } else if (period === 'this-year') {
           matchPeriod = (tDate.getFullYear() === now.getFullYear());
+        } else if (period === 'custom') {
+          const start = document.getElementById('startDate').value;
+          const end = document.getElementById('endDate').value;
+          if (start && end) {
+            matchPeriod = (t.tanggal >= start && t.tanggal <= end);
+          }
         }
         return matchRek && matchPeriod;
       });
     }
 
-    // Render Laporan Rapi Berdasarkan Rekening (Untuk Tampilan & Cetak PDF)
     function renderLaporanView() {
       const filtered = filterExportData();
       const selectedRek = document.getElementById('reportRekening').value;
@@ -504,7 +600,6 @@
       
       document.getElementById('reportSubTitle').innerText = `${periodText} • Rekening: ${selectedRek}`;
 
-      // Kelompokkan per Rekening
       const grouped = {};
       const activeReks = selectedRek === 'all' ? dbMaster.rekening : [selectedRek];
 
@@ -534,6 +629,7 @@
       let containerHtml = '';
       activeReks.forEach(rek => {
         const dataRek = grouped[rek];
+        if (!dataRek) return;
         const saldoRek = dataRek.totalMasuk - dataRek.totalKeluar;
 
         containerHtml += `
@@ -583,13 +679,11 @@
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = `Laporan_Keuangan_Per_Rekening_${new Date().toISOString().split('T')[0]}.csv`;
+      link.download = `Laporan_Keuangan_${new Date().toISOString().split('T')[0]}.csv`;
       link.click();
     }
 
-    function downloadPDF() {
-      window.print();
-    }
+    function downloadPDF() { window.print(); }
 
     function renderLaporanCharts(filteredData) {
       const saldoMap = {};
