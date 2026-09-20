@@ -1,20 +1,19 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Money Manager Pro</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' };
+  </script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#059669">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2953/2953363.png">
-
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     .pb-safe { padding-bottom: calc(5rem + env(safe-area-inset-bottom)); }
@@ -26,37 +25,43 @@
     }
   </style>
 </head>
-<body class="bg-gray-100 text-gray-800 pb-safe">
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 pb-safe transition-colors duration-200">
 
-  <header class="bg-emerald-600 text-white p-4 sticky top-0 z-20 shadow-md flex justify-between items-center no-print">
+  <!-- Header Topbar -->
+  <header class="bg-emerald-600 dark:bg-emerald-800 text-white p-4 sticky top-0 z-20 shadow-md flex justify-between items-center no-print">
     <h1 class="text-xl font-bold flex items-center gap-2">
       <i class="fa-solid fa-wallet"></i> Money Manager
     </h1>
-    <span id="currentDate" class="text-xs bg-emerald-700 px-3 py-1 rounded-full"></span>
+    <div class="flex items-center gap-3">
+      <button onclick="toggleDarkMode()" class="text-xs bg-emerald-700 dark:bg-emerald-900 px-3 py-1.5 rounded-full hover:bg-emerald-600 transition">
+        <i id="darkIcon" class="fa-solid fa-moon"></i>
+      </button>
+      <span id="currentDate" class="text-xs bg-emerald-700 dark:bg-emerald-900 px-3 py-1.5 rounded-full"></span>
+    </div>
   </header>
 
   <main class="max-w-md mx-auto p-4 space-y-4">
 
-    <!-- TAB 1: TRANSAKSI -->
+    <!-- ================= TAB 1: TRANSAKSI ================= -->
     <section id="page-transaksi" class="space-y-4">
-      <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 grid grid-cols-3 gap-2 text-center">
-        <div class="p-2 rounded-xl bg-emerald-50">
-          <p class="text-xs text-emerald-600 font-medium">Pemasukan</p>
-          <p id="sumMasuk" class="text-xs font-bold text-emerald-700 mt-1">Rp 0</p>
+      <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 grid grid-cols-3 gap-2 text-center">
+        <div class="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-900/30">
+          <p class="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Pemasukan</p>
+          <p id="sumMasuk" class="text-xs font-bold text-emerald-700 dark:text-emerald-300 mt-1">Rp 0</p>
         </div>
-        <div class="p-2 rounded-xl bg-red-50">
-          <p class="text-xs text-red-600 font-medium">Pengeluaran</p>
-          <p id="sumKeluar" class="text-xs font-bold text-red-700 mt-1">Rp 0</p>
+        <div class="p-2 rounded-xl bg-red-50 dark:bg-red-900/30">
+          <p class="text-xs text-red-600 dark:text-red-400 font-medium">Pengeluaran</p>
+          <p id="sumKeluar" class="text-xs font-bold text-red-700 dark:text-red-300 mt-1">Rp 0</p>
         </div>
-        <div class="p-2 rounded-xl bg-blue-50">
-          <p class="text-xs text-blue-600 font-medium">Saldo Bersih</p>
-          <p id="sumSaldo" class="text-xs font-bold text-blue-700 mt-1">Rp 0</p>
+        <div class="p-2 rounded-xl bg-blue-50 dark:bg-blue-900/30">
+          <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">Saldo Bersih</p>
+          <p id="sumSaldo" class="text-xs font-bold text-blue-700 dark:text-blue-300 mt-1">Rp 0</p>
         </div>
       </div>
 
       <div class="flex justify-between items-center px-1">
-        <h2 class="text-base font-bold text-gray-700">Riwayat Transaksi</h2>
-        <button onclick="fetchBackendData()" class="text-emerald-600 text-xs font-semibold hover:underline">
+        <h2 class="text-base font-bold text-gray-700 dark:text-gray-200">Riwayat Transaksi (Klik untuk Edit)</h2>
+        <button onclick="fetchBackendData()" class="text-emerald-600 dark:text-emerald-400 text-xs font-semibold hover:underline">
           <i class="fa-solid fa-rotate"></i> Sync Cloud
         </button>
       </div>
@@ -69,80 +74,48 @@
       </div>
     </section>
 
-    <!-- TAB 2: LAPORAN -->
+    <!-- ================= TAB 2: LAPORAN (MINIMALIS & MODERN) ================= -->
     <section id="page-laporan" class="hidden space-y-4">
-      <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3 no-print">
-        <h2 class="text-sm font-bold text-gray-800"><i class="fa-solid fa-filter text-emerald-600"></i> Filter & Laporan Keuangan</h2>
-        
+      <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex justify-between items-center no-print">
         <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Periode Waktu</label>
-          <select id="reportPeriod" class="w-full p-2.5 border rounded-xl text-xs bg-gray-50 mb-2" onchange="toggleCustomDate(this.value)">
-            <option value="all">Semua Waktu</option>
-            <option value="this-month">Bulan Ini</option>
-            <option value="last-month">Bulan Lalu</option>
-            <option value="this-year">Tahun Ini</option>
-            <option value="custom">Rentang Waktu Kustom</option>
-          </select>
-          
-          <div id="customDateContainer" class="hidden grid grid-cols-2 gap-2 mt-2">
-            <div>
-              <label class="block text-[10px] text-gray-500">Dari Tanggal</label>
-              <input type="date" id="startDate" class="w-full p-2 border rounded-xl text-xs bg-gray-50" onchange="renderLaporanView()">
-            </div>
-            <div>
-              <label class="block text-[10px] text-gray-500">Sampai Tanggal</label>
-              <input type="date" id="endDate" class="w-full p-2 border rounded-xl text-xs bg-gray-50" onchange="renderLaporanView()">
-            </div>
-          </div>
+          <h2 class="text-sm font-bold text-gray-800 dark:text-gray-100">Laporan Keuangan</h2>
+          <p id="reportSubTitle" class="text-xs text-gray-400">Ringkasan Saldo Rekening</p>
         </div>
+        <button onclick="openFilterModal()" class="bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 hover:bg-emerald-100 transition">
+          <i class="fa-solid fa-filter"></i> Filter Waktu
+        </button>
+      </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Filter Rekening / Akun</label>
-          <select id="reportRekening" class="w-full p-2.5 border rounded-xl text-xs bg-gray-50" onchange="renderLaporanView()">
-            <option value="all">Semua Rekening</option>
-          </select>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2 pt-2">
-          <button onclick="downloadExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-xl shadow">
-            <i class="fa-solid fa-file-excel mr-1"></i> Unduh Excel
-          </button>
-          <button onclick="downloadPDF()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl shadow">
-            <i class="fa-solid fa-file-pdf mr-1"></i> Cetak PDF
-          </button>
+      <!-- Daftar Rekening Ringkas (Klik untuk buka detail mutasi) -->
+      <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 space-y-3">
+        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Daftar Akun / Rekening (Klik untuk Detail)</h3>
+        <div id="summaryRekeningList" class="space-y-2">
+          <!-- Diisi via JS -->
         </div>
       </div>
 
-      <div id="printArea" class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-4">
-        <div class="text-center border-b pb-3">
-          <h2 class="text-base font-bold text-gray-800">Laporan Keuangan Per Rekening</h2>
-          <p id="reportSubTitle" class="text-xs text-gray-500">Semua Waktu • Semua Rekening</p>
-        </div>
-        
-        <div id="reportStructuredContainer" class="space-y-4 text-xs"></div>
-      </div>
-
-      <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3 no-print">
-        <h2 class="text-sm font-bold text-gray-800"><i class="fa-solid fa-chart-pie text-emerald-600"></i> Saldo Antar Rekening</h2>
+      <!-- Chart Minimalis -->
+      <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 space-y-3 no-print">
+        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Komposisi Saldo Rekening</h3>
         <div class="relative h-48 w-full flex justify-center items-center">
           <canvas id="chartSaldoRekening"></canvas>
         </div>
       </div>
 
-      <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3 no-print">
-        <h2 class="text-sm font-bold text-gray-800"><i class="fa-solid fa-chart-bar text-emerald-600"></i> Pemasukan vs Pengeluaran</h2>
+      <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 space-y-3 no-print">
+        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Perbandingan Arus Kas</h3>
         <div class="relative h-44 w-full flex justify-center items-center">
           <canvas id="chartMasukKeluar"></canvas>
         </div>
       </div>
     </section>
 
-    <!-- TAB 3: PENGATURAN -->
+    <!-- ================= TAB 3: PENGATURAN ================= -->
     <section id="page-pengaturan" class="hidden space-y-4">
-      <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 space-y-4">
-        <div class="flex justify-between items-center border-b pb-2">
-          <h2 class="text-base font-bold text-gray-800"><i class="fa-solid fa-gear text-emerald-600"></i> Master Data</h2>
-          <span class="text-xs text-gray-400">Kelola Akun & Kategori</span>
+      <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 space-y-4">
+        <div class="flex justify-between items-center border-b dark:border-gray-700 pb-2">
+          <h2 class="text-base font-bold text-gray-800 dark:text-gray-100"><i class="fa-solid fa-gear text-emerald-600"></i> Master Data</h2>
+          <span class="text-xs text-gray-400">Akun & Kategori</span>
         </div>
         <div id="masterList" class="space-y-3 text-sm pt-1"></div>
       </div>
@@ -150,51 +123,119 @@
 
   </main>
 
-  <!-- TOMBOL TAMBAH TRANSAKSI (+) -->
+  <!-- ================= POP-UP MODAL FILTER LAPORAN ================= -->
+  <div id="modalFilter" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4 no-print">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-sm p-5 space-y-4">
+      <div class="flex justify-between items-center border-b dark:border-gray-700 pb-3">
+        <h3 class="font-bold text-base text-gray-800 dark:text-gray-100">Filter Periode Laporan</h3>
+        <button onclick="closeFilterModal()" class="text-gray-400 hover:text-gray-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-gray-600 dark:text-gray-300 mb-1">Pilih Mode Filter</label>
+          <select id="reportPeriodMode" class="w-full p-2.5 border dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200" onchange="handlePeriodModeChange(this.value)">
+            <option value="all">Semua Waktu</option>
+            <option value="weekly">Per Periode Mingguan</option>
+            <option value="monthly">Bulanan (Bulan Ini)</option>
+            <option value="calendar">Pilih Langsung di Kalender</option>
+          </select>
+        </div>
+
+        <div id="weeklyContainer" class="hidden">
+          <label class="block font-semibold text-gray-600 dark:text-gray-300 mb-1">Pilih Minggu Ke-</label>
+          <input type="week" id="inputWeek" class="w-full p-2.5 border dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+        </div>
+
+        <div id="calendarContainer" class="hidden space-y-2">
+          <div>
+            <label class="block text-[10px] text-gray-500">Dari Tanggal</label>
+            <input type="date" id="filterStartDate" class="w-full p-2 border dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+          </div>
+          <div>
+            <label class="block text-[10px] text-gray-500">Sampai Tanggal</label>
+            <input type="date" id="filterEndDate" class="w-full p-2 border dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+          </div>
+        </div>
+
+        <div class="pt-3 flex gap-2">
+          <button onclick="applyFilter()" class="w-full py-2.5 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700">Terapkan Filter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= POP-UP TAB BARU: DETAIL MUTASI REKENING ================= -->
+  <div id="modalDetailRekening" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b dark:border-gray-700 pb-3">
+        <div>
+          <h3 id="detailRekeningTitle" class="font-bold text-base text-gray-800 dark:text-gray-100">Detail Rekening</h3>
+          <p id="detailRekeningSaldo" class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5">Saldo: Rp 0</p>
+        </div>
+        <button onclick="closeDetailRekening()" class="text-gray-400 hover:text-gray-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="flex gap-2 no-print">
+        <button onclick="downloadRekeningExcel()" class="w-1/2 bg-emerald-600 text-white text-xs font-bold py-2 rounded-xl shadow">
+          <i class="fa-solid fa-file-excel mr-1"></i> Unduh Excel
+        </button>
+        <button onclick="downloadRekeningPDF()" class="w-1/2 bg-blue-600 text-white text-xs font-bold py-2 rounded-xl shadow">
+          <i class="fa-solid fa-file-pdf mr-1"></i> Cetak PDF
+        </button>
+      </div>
+
+      <div id="printAreaDetail" class="space-y-2 text-xs">
+        <div id="detailMutasiList" class="space-y-2">
+          <!-- Diisi via JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= FLOATING BUTTON (+) ================= -->
   <div id="fabContainer" class="fixed bottom-20 right-5 z-40 no-print">
     <button onclick="toggleActionMenu()" class="w-14 h-14 bg-emerald-600 text-white rounded-full shadow-lg flex items-center justify-center text-2xl hover:bg-emerald-700 focus:outline-none transition-transform active:scale-95">
       <i id="fabIcon" class="fa-solid fa-plus transition-transform duration-300"></i>
     </button>
   </div>
 
-  <!-- TOMBOL TAMBAH MASTER DATA (+) KHUSUS TAB PENGATURAN -->
   <div id="fabMasterContainer" class="fixed bottom-20 right-5 z-40 no-print hidden">
     <button onclick="openMasterForm()" class="w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center text-2xl hover:bg-blue-700 focus:outline-none transition-transform active:scale-95">
       <i class="fa-solid fa-plus"></i>
     </button>
   </div>
 
-  <!-- POPUP OPSI TRANSAKSI -->
   <div id="actionMenu" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-30 hidden flex flex-col justify-end p-5 pb-24 space-y-3 no-print">
     <div class="max-w-md mx-auto w-full space-y-3">
-      <button onclick="openForm('Pemasukan')" class="w-full bg-white p-4 rounded-2xl shadow-lg flex items-center justify-between text-emerald-600 font-bold active:bg-emerald-50">
+      <button onclick="openForm('Pemasukan')" class="w-full bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-lg flex items-center justify-between text-emerald-600 font-bold active:bg-emerald-50">
         <span class="flex items-center gap-3"><i class="fa-solid fa-circle-arrow-down text-xl"></i> Pemasukan</span>
         <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
       </button>
-      <button onclick="openForm('Pengeluaran')" class="w-full bg-white p-4 rounded-2xl shadow-lg flex items-center justify-between text-red-600 font-bold active:bg-red-50">
+      <button onclick="openForm('Pengeluaran')" class="w-full bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-lg flex items-center justify-between text-red-600 font-bold active:bg-red-50">
         <span class="flex items-center gap-3"><i class="fa-solid fa-circle-arrow-up text-xl"></i> Pengeluaran</span>
         <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
       </button>
-      <button onclick="openForm('Transfer')" class="w-full bg-white p-4 rounded-2xl shadow-lg flex items-center justify-between text-blue-600 font-bold active:bg-blue-50">
+      <button onclick="openForm('Transfer')" class="w-full bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-lg flex items-center justify-between text-blue-600 font-bold active:bg-blue-50">
         <span class="flex items-center gap-3"><i class="fa-solid fa-right-left text-xl"></i> Transfer (Pindah Buku)</span>
         <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
       </button>
     </div>
   </div>
 
-  <!-- MODAL FORM TAMBAH/EDIT MASTER DATA -->
+  <!-- MODAL MASTER FORM -->
   <div id="modalMasterForm" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4 no-print">
-    <div class="bg-white rounded-2xl w-full max-w-md p-5 space-y-4">
-      <div class="flex justify-between items-center border-b pb-3">
-        <h3 id="masterFormTitle" class="font-bold text-lg text-gray-800">Tambah Master Data</h3>
+    <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md p-5 space-y-4">
+      <div class="flex justify-between items-center border-b dark:border-gray-700 pb-3">
+        <h3 id="masterFormTitle" class="font-bold text-lg text-gray-800 dark:text-gray-100">Tambah Master Data</h3>
         <button onclick="closeMasterForm()" class="text-gray-400 hover:text-gray-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
       <form id="masterForm" onsubmit="handleMasterFormSubmit(event)" class="space-y-3 text-sm">
         <input type="hidden" id="masterOldNama">
         <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Jenis Master</label>
-          <select id="masterJenis" class="w-full p-2.5 border rounded-xl text-xs bg-gray-50">
+          <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Jenis Master</label>
+          <select id="masterJenis" class="w-full p-2.5 border dark:border-gray-700 rounded-xl text-xs bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
             <option value="rekening">Rekening / Akun</option>
             <option value="kategoriMasuk">Kategori Pemasukan</option>
             <option value="kategoriKeluar">Kategori Pengeluaran</option>
@@ -202,77 +243,79 @@
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Nama Baru</label>
-          <input type="text" id="masterNama" placeholder="Nama..." required class="w-full p-2.5 border rounded-xl bg-gray-50">
+          <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Nama Baru</label>
+          <input type="text" id="masterNama" placeholder="Nama..." required class="w-full p-2.5 border dark:border-gray-700 rounded-xl text-xs bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
         </div>
 
         <div class="pt-2 flex gap-2">
-          <button type="button" onclick="closeMasterForm()" class="w-1/2 py-2.5 border rounded-xl text-gray-600 font-semibold">Batal</button>
+          <button type="button" onclick="closeMasterForm()" class="w-1/2 py-2.5 border dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 font-semibold">Batal</button>
           <button type="submit" class="w-1/2 py-2.5 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700">Simpan</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- MODAL FORM TRANSAKSI -->
+  <!-- MODAL FORM TRANSAKSI (EDIT & TAMBAH) -->
   <div id="modalForm" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4 no-print">
-    <div class="bg-white rounded-2xl w-full max-w-md p-5 space-y-4 max-h-[90vh] overflow-y-auto">
-      <div class="flex justify-between items-center border-b pb-3">
-        <h3 id="formTitle" class="font-bold text-lg text-gray-800">Form Transaksi</h3>
+    <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b dark:border-gray-700 pb-3">
+        <h3 id="formTitle" class="font-bold text-lg text-gray-800 dark:text-gray-100">Form Transaksi</h3>
         <button onclick="closeForm()" class="text-gray-400 hover:text-gray-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
       <form id="txForm" onsubmit="handleFormSubmit(event)" class="space-y-3 text-sm">
+        <input type="hidden" id="txRowIndex">
         <input type="hidden" id="txTipe">
         <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Tanggal</label>
-          <input type="date" id="txTanggal" required class="w-full p-2.5 border rounded-xl bg-gray-50">
+          <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Tanggal</label>
+          <input type="date" id="txTanggal" required class="w-full p-2.5 border dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
         </div>
 
         <div id="fieldRekAsal">
-          <label id="lblRekAsal" class="block text-xs font-semibold text-gray-600 mb-1">Rekening</label>
-          <input type="text" id="txRekAsal" list="listRekening" placeholder="Pilih atau Ketik Baru..." required class="w-full p-2.5 border rounded-xl bg-gray-50">
+          <label id="lblRekAsal" class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Rekening</label>
+          <input type="text" id="txRekAsal" list="listRekening" placeholder="Pilih atau Ketik Baru..." required class="w-full p-2.5 border dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
         </div>
 
         <div id="fieldRekTujuan" class="hidden">
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Rekening Tujuan</label>
-          <input type="text" id="txRekTujuan" list="listRekening" placeholder="Pilih atau Ketik Baru..." class="w-full p-2.5 border rounded-xl bg-gray-50">
+          <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Rekening Tujuan</label>
+          <input type="text" id="txRekTujuan" list="listRekening" placeholder="Pilih atau Ketik Baru..." class="w-full p-2.5 border dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
         </div>
 
         <div id="fieldKategori">
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Kategori</label>
-          <input type="text" id="txKategori" list="listKategori" placeholder="Pilih atau Ketik Baru..." class="w-full p-2.5 border rounded-xl bg-gray-50">
+          <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Kategori</label>
+          <input type="text" id="txKategori" list="listKategori" placeholder="Pilih atau Ketik Baru..." class="w-full p-2.5 border dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Jumlah (Rp)</label>
-          <input type="number" id="txJumlah" min="1" placeholder="0" required class="w-full p-2.5 border rounded-xl bg-gray-50 font-semibold text-emerald-700">
+          <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Jumlah (Rp)</label>
+          <input type="number" id="txJumlah" min="1" placeholder="0" required class="w-full p-2.5 border dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-semibold text-emerald-700 dark:text-emerald-400">
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Catatan</label>
-          <input type="text" id="txCatatan" placeholder="Opsional..." class="w-full p-2.5 border rounded-xl bg-gray-50">
+          <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Catatan</label>
+          <input type="text" id="txCatatan" placeholder="Opsional..." class="w-full p-2.5 border dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
         </div>
 
         <datalist id="listRekening"></datalist>
         <datalist id="listKategori"></datalist>
 
         <div class="pt-2 flex gap-2">
-          <button type="button" onclick="closeForm()" class="w-1/2 py-2.5 border rounded-xl text-gray-600 font-semibold">Batal</button>
+          <button type="button" onclick="closeForm()" class="w-1/2 py-2.5 border dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 font-semibold">Batal</button>
           <button type="submit" class="w-1/2 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700">Simpan</button>
         </div>
       </form>
     </div>
   </div>
 
-  <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-20 flex justify-around py-2 max-w-md mx-auto no-print">
-    <button onclick="switchTab('transaksi')" id="nav-transaksi" class="flex flex-col items-center text-emerald-600 text-xs font-semibold">
+  <!-- NAVIGASI BAWAH -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-20 flex justify-around py-2 max-w-md mx-auto no-print">
+    <button onclick="switchTab('transaksi')" id="nav-transaksi" class="flex flex-col items-center text-emerald-600 dark:text-emerald-400 text-xs font-semibold">
       <i class="fa-solid fa-list-check text-lg mb-0.5"></i> Transaksi
     </button>
-    <button onclick="switchTab('laporan')" id="nav-laporan" class="flex flex-col items-center text-gray-400 text-xs font-semibold hover:text-emerald-600">
+    <button onclick="switchTab('laporan')" id="nav-laporan" class="flex flex-col items-center text-gray-400 dark:text-gray-400 text-xs font-semibold hover:text-emerald-600">
       <i class="fa-solid fa-chart-simple text-lg mb-0.5"></i> Laporan
     </button>
-    <button onclick="switchTab('pengaturan')" id="nav-pengaturan" class="flex flex-col items-center text-gray-400 text-xs font-semibold hover:text-emerald-600">
+    <button onclick="switchTab('pengaturan')" id="nav-pengaturan" class="flex flex-col items-center text-gray-400 dark:text-gray-400 text-xs font-semibold hover:text-emerald-600">
       <i class="fa-solid fa-sliders text-lg mb-0.5"></i> Pengaturan
     </button>
   </nav>
@@ -282,18 +325,41 @@
       navigator.serviceWorker.register('/sw.service.worker.js').catch(err => console.log(err));
     }
 
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyFB01sHvXjUVU1-fHfOuKsEVxAY_LeO7Uf3VyoP6-92nL1LwQHeyan_WhAYzEDO3lD3g/exec";
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyBOwtL1yu2CeUj8J26SmOYsPjq_Siy2Ps9iWcHxqAwfPbwixpE5N4TyJw4YOs4P6al/exec";
 
     let dbMaster = { rekening: [], kategoriMasuk: [], kategoriKeluar: [] };
     let dbTransaksi = [];
     let chartSaldoInstance = null;
     let chartMasukKeluarInstance = null;
+    let currentFilter = { mode: 'all', start: '', end: '' };
+    let activeDetailRekeningName = '';
 
     document.addEventListener("DOMContentLoaded", () => {
       document.getElementById('currentDate').innerText = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
       document.getElementById('txTanggal').value = new Date().toISOString().split('T')[0];
+      
+      // Cek Dark Mode Preference
+      if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.getElementById('darkIcon').className = "fa-solid fa-sun";
+      }
+      
       fetchBackendData();
     });
+
+    function toggleDarkMode() {
+      const html = document.documentElement;
+      const icon = document.getElementById('darkIcon');
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+        icon.className = "fa-solid fa-moon";
+      } else {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+        icon.className = "fa-solid fa-sun";
+      }
+    }
 
     async function fetchBackendData() {
       try {
@@ -326,7 +392,6 @@
       renderMasterOptions();
       renderMasterList();
       renderTransaksi();
-      populateReportFilterRekening();
       if(!document.getElementById('page-laporan').classList.contains('hidden')) {
         renderLaporanView();
       }
@@ -336,16 +401,15 @@
       ['transaksi', 'laporan', 'pengaturan'].forEach(t => {
         document.getElementById(`page-${t}`).classList.add('hidden');
         const nav = document.getElementById(`nav-${t}`);
-        nav.classList.remove('text-emerald-600');
-        nav.classList.add('text-gray-400');
+        nav.classList.remove('text-emerald-600', 'dark:text-emerald-400');
+        nav.classList.add('text-gray-400', 'dark:text-gray-400');
       });
 
       document.getElementById(`page-${tab}`).classList.remove('hidden');
       const activeNav = document.getElementById(`nav-${tab}`);
-      activeNav.classList.remove('text-gray-400');
-      activeNav.classList.add('text-emerald-600');
+      activeNav.classList.remove('text-gray-400', 'dark:text-gray-400');
+      activeNav.classList.add('text-emerald-600', 'dark:text-emerald-400');
 
-      // Pengaturan Tombol Melayang (FAB)
       const fab = document.getElementById('fabContainer');
       const fabMaster = document.getElementById('fabMasterContainer');
       
@@ -371,6 +435,50 @@
       icon.classList.toggle('rotate-45');
     }
 
+    // Modal Filter Pop-up
+    function openFilterModal() { document.getElementById('modalFilter').classList.remove('hidden'); }
+    function closeFilterModal() { document.getElementById('modalFilter').classList.add('hidden'); }
+
+    function handlePeriodModeChange(mode) {
+      document.getElementById('weeklyContainer').classList.add('hidden');
+      document.getElementById('calendarContainer').classList.add('hidden');
+      if (mode === 'weekly') document.getElementById('weeklyContainer').classList.remove('hidden');
+      if (mode === 'calendar') document.getElementById('calendarContainer').classList.remove('hidden');
+    }
+
+    function applyFilter() {
+      const mode = document.getElementById('reportPeriodMode').value;
+      currentFilter.mode = mode;
+      const now = new Date();
+
+      if (mode === 'all') {
+        currentFilter.start = ''; currentFilter.end = '';
+      } else if (mode === 'monthly') {
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+        currentFilter.start = firstDay.toISOString().split('T')[0];
+        currentFilter.end = now.toISOString().split('T')[0];
+      } else if (mode === 'weekly') {
+        const val = document.getElementById('inputWeek').value;
+        if (!val) return alert("Pilih minggu terlebih dahulu");
+        // format YYYY-Www
+        const year = val.split('-W')[0];
+        const week = val.split('-W')[1];
+        const simpleDate = new Date(year, 0, 1 + (week - 1) * 7);
+        const dayOfWeek = simpleDate.getDay();
+        const startOfWeek = new Date(simpleDate.setDate(simpleDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1)));
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(endOfWeek.getDate() + 6);
+        currentFilter.start = startOfWeek.toISOString().split('T')[0];
+        currentFilter.end = endOfWeek.toISOString().split('T')[0];
+      } else if (mode === 'calendar') {
+        currentFilter.start = document.getElementById('filterStartDate').value;
+        currentFilter.end = document.getElementById('filterEndDate').value;
+      }
+
+      closeFilterModal();
+      renderLaporanView();
+    }
+
     // Modal Master Form (Tambah / Edit)
     function openMasterForm(jenis = 'rekening', namaLama = '') {
       document.getElementById('masterForm').reset();
@@ -382,7 +490,7 @@
       if (namaLama) {
         titleEl.innerText = "Edit Master Data";
         jenisEl.value = jenis;
-        jenisEl.disabled = true; // Jenis tidak boleh diubah saat edit
+        jenisEl.disabled = true;
         namaEl.value = namaLama;
         oldNamaEl.value = namaLama;
       } else {
@@ -393,9 +501,7 @@
       document.getElementById('modalMasterForm').classList.remove('hidden');
     }
 
-    function closeMasterForm() {
-      document.getElementById('modalMasterForm').classList.add('hidden');
-    }
+    function closeMasterForm() { document.getElementById('modalMasterForm').classList.add('hidden'); }
 
     function handleMasterFormSubmit(e) {
       e.preventDefault();
@@ -406,10 +512,8 @@
       if(!nama) return alert('Nama tidak boleh kosong');
 
       if (oldNama) {
-        // Edit / Update Master
         postToBackend('editMaster', { jenis, oldNama, newNama: nama });
       } else {
-        // Tambah Master Baru
         postToBackend('simpanMaster', { jenis, nama });
       }
       closeMasterForm();
@@ -419,11 +523,6 @@
       document.getElementById('listRekening').innerHTML = dbMaster.rekening.map(r => `<option value="${r}">`).join('');
     }
 
-    function populateReportFilterRekening() {
-      const sel = document.getElementById('reportRekening');
-      sel.innerHTML = '<option value="all">Semua Rekening</option>' + dbMaster.rekening.map(r => `<option value="${r}">${r}</option>`).join('');
-    }
-
     function renderMasterList() {
       const list = document.getElementById('masterList');
       let html = '<div class="space-y-4">';
@@ -431,11 +530,11 @@
         let sec = `<div class="space-y-1.5"><p class="text-xs font-bold text-gray-500 uppercase tracking-wider">${title}:</p>`;
         if(items.length === 0) sec += `<p class="text-xs text-gray-400 italic">Belum ada data</p>`;
         items.forEach((i) => {
-          sec += `<div class="flex justify-between items-center bg-gray-50 p-2.5 rounded-xl text-xs border border-gray-100">
-            <span class="font-medium text-gray-700">${i}</span>
+          sec += `<div class="flex justify-between items-center bg-gray-50 dark:bg-gray-900 p-2.5 rounded-xl text-xs border border-gray-100 dark:border-gray-700">
+            <span class="font-medium text-gray-700 dark:text-gray-200">${i}</span>
             <div class="flex gap-2">
-              <button onclick="openMasterForm('${jenis}', '${i}')" class="text-blue-500 hover:text-blue-700 px-1"><i class="fa-solid fa-pen"></i></button>
-              <button onclick="hapusMaster('${jenis}', '${i}')" class="text-red-500 hover:text-red-700 px-1"><i class="fa-solid fa-trash"></i></button>
+              <button onclick="openMasterForm('${jenis}', '${i}')" class="text-blue-500 px-1"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="hapusMaster('${jenis}', '${i}')" class="text-red-500 px-1"><i class="fa-solid fa-trash"></i></button>
             </div>
           </div>`;
         });
@@ -454,37 +553,62 @@
       }
     }
 
-    function openForm(tipe) {
-      toggleActionMenu();
+    function openForm(tipe, editData = null) {
+      if (!editData) toggleActionMenu();
       document.getElementById('txForm').reset();
-      document.getElementById('txTanggal').value = new Date().toISOString().split('T')[0];
-      document.getElementById('txTipe').value = tipe;
-      document.getElementById('formTitle').innerText = 'Tambah ' + tipe;
-
+      
+      const titleEl = document.getElementById('formTitle');
       const fieldRekTujuan = document.getElementById('fieldRekTujuan');
       const fieldKategori = document.getElementById('fieldKategori');
       const katDatalist = document.getElementById('listKategori');
 
-      if (tipe === 'Transfer') {
-        fieldRekTujuan.classList.remove('hidden');
-        fieldKategori.classList.add('hidden');
+      if (editData) {
+        titleEl.innerText = 'Edit Transaksi';
+        document.getElementById('txRowIndex').value = editData.rowIndex;
+        document.getElementById('txTanggal').value = editData.tanggal;
+        document.getElementById('txTipe').value = editData.tipe;
+        document.getElementById('txRekAsal').value = editData.rekAsal;
+        document.getElementById('txJumlah').value = editData.jumlah;
+        document.getElementById('txCatatan').value = editData.catatan;
+
+        if (editData.tipe === 'Transfer') {
+          fieldRekTujuan.classList.remove('hidden');
+          fieldKategori.classList.add('hidden');
+          document.getElementById('txRekTujuan').value = editData.rekTujuan;
+        } else {
+          fieldRekTujuan.classList.add('hidden');
+          fieldKategori.classList.remove('hidden');
+          document.getElementById('txKategori').value = editData.kategori;
+          const katList = editData.tipe === 'Pemasukan' ? dbMaster.kategoriMasuk : dbMaster.kategoriKeluar;
+          katDatalist.innerHTML = katList.map(k => `<option value="${k}">`).join('');
+        }
       } else {
-        fieldRekTujuan.classList.add('hidden');
-        fieldKategori.classList.remove('hidden');
-        const katList = tipe === 'Pemasukan' ? dbMaster.kategoriMasuk : dbMaster.kategoriKeluar;
-        katDatalist.innerHTML = katList.map(k => `<option value="${k}">`).join('');
+        document.getElementById('txRowIndex').value = '';
+        document.getElementById('txTanggal').value = new Date().toISOString().split('T')[0];
+        document.getElementById('txTipe').value = tipe;
+        titleEl.innerText = 'Tambah ' + tipe;
+
+        if (tipe === 'Transfer') {
+          fieldRekTujuan.classList.remove('hidden');
+          fieldKategori.classList.add('hidden');
+        } else {
+          fieldRekTujuan.classList.add('hidden');
+          fieldKategori.classList.remove('hidden');
+          const katList = tipe === 'Pemasukan' ? dbMaster.kategoriMasuk : dbMaster.kategoriKeluar;
+          katDatalist.innerHTML = katList.map(k => `<option value="${k}">`).join('');
+        }
       }
 
       document.getElementById('modalForm').classList.remove('hidden');
     }
 
-    function closeForm() {
-      document.getElementById('modalForm').classList.add('hidden');
-    }
+    function closeForm() { document.getElementById('modalForm').classList.add('hidden'); }
 
     function handleFormSubmit(e) {
       e.preventDefault();
+      const rowIndex = document.getElementById('txRowIndex').value;
       const payload = {
+        rowIndex: rowIndex ? Number(rowIndex) : null,
         tanggal: document.getElementById('txTanggal').value,
         tipe: document.getElementById('txTipe').value,
         rekAsal: document.getElementById('txRekAsal').value,
@@ -494,7 +618,8 @@
         catatan: document.getElementById('txCatatan').value
       };
 
-      postToBackend('simpanTransaksi', payload);
+      const action = rowIndex ? 'editTransaksi' : 'simpanTransaksi';
+      postToBackend(action, payload);
       closeForm();
     }
 
@@ -525,19 +650,21 @@
         const sub = tx.tipe === 'Transfer' ? `${tx.rekAsal} ➔ ${tx.rekTujuan}` : `${tx.rekAsal} • ${tx.kategori || '-'}`;
 
         html += `
-          <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center">
+          <div onclick='openForm(null, ${JSON.stringify(tx)})' class="bg-white dark:bg-gray-800 p-3.5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex justify-between items-center cursor-pointer hover:border-emerald-500 transition">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-xl ${badge} flex items-center justify-center text-lg">
                 <i class="fa-solid ${icon}"></i>
               </div>
               <div>
-                <p class="font-bold text-sm text-gray-800">${tx.catatan || tx.kategori || tx.tipe}</p>
+                <p class="font-bold text-sm text-gray-800 dark:text-gray-100">${tx.catatan || tx.kategori || tx.tipe}</p>
                 <p class="text-xs text-gray-400">${tx.tanggal} • ${sub}</p>
               </div>
             </div>
-            <div class="text-right">
-              <p class="font-bold text-sm ${color}">Rp ${amt.toLocaleString('id-ID')}</p>
-              <button onclick="hapusTx(${tx.rowIndex})" class="text-gray-400 hover:text-red-600 text-xs mt-1"><i class="fa-solid fa-trash"></i></button>
+            <div class="text-right flex items-center gap-2">
+              <div>
+                <p class="font-bold text-sm ${color}">Rp ${amt.toLocaleString('id-ID')}</p>
+              </div>
+              <button onclick="event.stopPropagation(); hapusTx(${tx.rowIndex})" class="text-gray-400 hover:text-red-600 text-xs p-1"><i class="fa-solid fa-trash"></i></button>
             </div>
           </div>
         `;
@@ -555,135 +682,120 @@
       }
     }
 
-    function toggleCustomDate(val) {
-      const container = document.getElementById('customDateContainer');
-      if (val === 'custom') {
-        container.classList.remove('hidden');
-      } else {
-        container.classList.add('hidden');
-      }
-      renderLaporanView();
-    }
-
-    function filterExportData() {
-      const period = document.getElementById('reportPeriod').value;
-      const rek = document.getElementById('reportRekening').value;
-      const now = new Date();
-
+    function filterDataByPeriod() {
       return dbTransaksi.filter(t => {
-        const tDate = new Date(t.tanggal);
-        let matchRek = (rek === 'all' || t.rekAsal === rek || t.rekTujuan === rek);
-        let matchPeriod = true;
-
-        if (period === 'this-month') {
-          matchPeriod = (tDate.getMonth() === now.getMonth() && tDate.getFullYear() === now.getFullYear());
-        } else if (period === 'last-month') {
-          const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-          matchPeriod = (tDate.getMonth() === lastMonth.getMonth() && tDate.getFullYear() === lastMonth.getFullYear());
-        } else if (period === 'this-year') {
-          matchPeriod = (tDate.getFullYear() === now.getFullYear());
-        } else if (period === 'custom') {
-          const start = document.getElementById('startDate').value;
-          const end = document.getElementById('endDate').value;
-          if (start && end) {
-            matchPeriod = (t.tanggal >= start && t.tanggal <= end);
-          }
+        const tDate = t.tanggal;
+        if (currentFilter.mode === 'all') return true;
+        if (currentFilter.start && currentFilter.end) {
+          return (tDate >= currentFilter.start && tDate <= currentFilter.end);
         }
-        return matchRek && matchPeriod;
+        return true;
       });
     }
 
+    // Render Laporan Minimalis (Hanya Nama Rekening & Saldo)
     function renderLaporanView() {
-      const filtered = filterExportData();
-      const selectedRek = document.getElementById('reportRekening').value;
-      const periodText = document.getElementById('reportPeriod').options[document.getElementById('reportPeriod').selectedIndex].text;
+      const filtered = filterDataByPeriod();
+      const summaryList = document.getElementById('summaryRekeningList');
       
-      document.getElementById('reportSubTitle').innerText = `${periodText} • Rekening: ${selectedRek}`;
+      const saldoMap = {};
+      dbMaster.rekening.forEach(r => saldoMap[r] = 0);
 
-      const grouped = {};
-      const activeReks = selectedRek === 'all' ? dbMaster.rekening : [selectedRek];
-
-      activeReks.forEach(r => {
-        grouped[r] = { transaksi: [], totalMasuk: 0, totalKeluar: 0 };
-      });
-
-      filtered.forEach(t => {
-        if (t.tipe === 'Pemasukan' && grouped[t.rekAsal]) {
-          grouped[t.rekAsal].transaksi.push(t);
-          grouped[t.rekAsal].totalMasuk += t.jumlah;
-        } else if (t.tipe === 'Pengeluaran' && grouped[t.rekAsal]) {
-          grouped[t.rekAsal].transaksi.push(t);
-          grouped[t.rekAsal].totalKeluar += t.jumlah;
-        } else if (t.tipe === 'Transfer') {
-          if (grouped[t.rekAsal]) {
-            grouped[t.rekAsal].transaksi.push({ ...t, catatan: `Transfer ke ${t.rekTujuan} (${t.catatan || ''})` });
-            grouped[t.rekAsal].totalKeluar += t.jumlah;
-          }
-          if (grouped[t.rekTujuan]) {
-            grouped[t.rekTujuan].transaksi.push({ ...t, catatan: `Transfer dari ${t.rekAsal} (${t.catatan || ''})` });
-            grouped[t.rekTujuan].totalMasuk += t.jumlah;
-          }
+      filtered.forEach(tx => {
+        const amt = Number(tx.jumlah);
+        if(tx.tipe === 'Pemasukan') {
+          if(saldoMap[tx.rekAsal] !== undefined) saldoMap[tx.rekAsal] += amt;
+        } else if(tx.tipe === 'Pengeluaran') {
+          if(saldoMap[tx.rekAsal] !== undefined) saldoMap[tx.rekAsal] -= amt;
+        } else if(tx.tipe === 'Transfer') {
+          if(saldoMap[tx.rekAsal] !== undefined) saldoMap[tx.rekAsal] -= amt;
+          if(saldoMap[tx.rekTujuan] !== undefined) saldoMap[tx.rekTujuan] += amt;
         }
       });
 
-      let containerHtml = '';
-      activeReks.forEach(rek => {
-        const dataRek = grouped[rek];
-        if (!dataRek) return;
-        const saldoRek = dataRek.totalMasuk - dataRek.totalKeluar;
-
-        containerHtml += `
-          <div class="border rounded-xl p-3 bg-gray-50 space-y-2">
-            <div class="flex justify-between items-center border-b pb-1 font-bold text-gray-800">
-              <span>🏦 Rekening: ${rek}</span>
-              <span class="${saldoRek >= 0 ? 'text-emerald-600' : 'text-red-600'}">Saldo: Rp ${saldoRek.toLocaleString('id-ID')}</span>
+      let html = '';
+      dbMaster.rekening.forEach(rek => {
+        const saldo = saldoMap[rek] || 0;
+        html += `
+          <div onclick="openDetailRekening('${rek}')" class="flex justify-between items-center bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-100 dark:border-gray-700 cursor-pointer hover:bg-emerald-50 dark:hover:bg-gray-800 transition">
+            <span class="font-bold text-sm text-gray-800 dark:text-gray-200"><i class="fa-solid fa-building-columns text-emerald-600 mr-2"></i> ${rek}</span>
+            <div class="text-right">
+              <p class="font-bold text-sm ${saldo >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600'}">Rp ${saldo.toLocaleString('id-ID')}</p>
+              <span class="text-[10px] text-gray-400">Ketuk untuk detail <i class="fa-solid fa-chevron-right text-[8px]"></i></span>
             </div>
+          </div>
         `;
-
-        if (dataRek.transaksi.length === 0) {
-          containerHtml += `<p class="text-gray-400 italic text-center py-1">Tidak ada transaksi</p>`;
-        } else {
-          containerHtml += `<div class="space-y-1">`;
-          dataRek.transaksi.forEach(tr => {
-            const isMasuk = (tr.tipe === 'Pemasukan' || (tr.tipe === 'Transfer' && tr.rekTujuan === rek));
-            containerHtml += `
-              <div class="flex justify-between items-center bg-white p-2 rounded-lg border text-xs">
-                <div>
-                  <span class="font-semibold text-gray-700">${tr.tanggal} - ${tr.kategori || tr.tipe}</span>
-                  <p class="text-gray-400 text-[10px]">${tr.catatan || '-'}</p>
-                </div>
-                <span class="font-bold ${isMasuk ? 'text-emerald-600' : 'text-red-600'}">
-                  ${isMasuk ? '+' : '-'} Rp ${tr.jumlah.toLocaleString('id-ID')}
-                </span>
-              </div>
-            `;
-          });
-          containerHtml += `</div>`;
-        }
-        containerHtml += `</div>`;
       });
 
-      document.getElementById('reportStructuredContainer').innerHTML = containerHtml;
+      summaryList.innerHTML = html || '<p class="text-xs text-gray-400 italic">Belum ada rekening.</p>';
       renderLaporanCharts(filtered);
     }
 
-    function downloadExcel() {
-      const data = filterExportData();
-      if(data.length === 0) return alert("Tidak ada data untuk diunduh.");
-      
-      let csv = "Rekening/Akun,Tanggal,Tipe,Kategori,Jumlah (Rp),Catatan\n";
-      data.forEach(t => {
-        csv += `"${t.rekAsal}","${t.tanggal}","${t.tipe}","${t.kategori || t.tipe}",${t.jumlah},"${t.catatan || ''}"\n`;
+    // Buka Tab/Pop-up Detail Mutasi Rekening
+    function openDetailRekening(rekName) {
+      activeDetailRekeningName = rekName;
+      const filtered = filterDataByPeriod();
+      let totalMasuk = 0, totalKeluar = 0;
+      let mutasiHtml = '';
+
+      filtered.forEach(tr => {
+        let isRelevant = false;
+        let isMasuk = false;
+        let desc = tr.catatan || tr.kategori || tr.tipe;
+
+        if (tr.tipe === 'Pemasukan' && tr.rekAsal === rekName) {
+          isRelevant = true; isMasuk = true;
+        } else if (tr.tipe === 'Pengeluaran' && tr.rekAsal === rekName) {
+          isRelevant = true; isMasuk = false;
+        } else if (tr.tipe === 'Transfer') {
+          if (tr.rekAsal === rekName) {
+            isRelevant = true; isMasuk = false; desc = `Transfer ke ${tr.rekTujuan} (${tr.catatan || ''})`;
+          } else if (tr.rekTujuan === rekName) {
+            isRelevant = true; isMasuk = true; desc = `Transfer dari ${tr.rekAsal} (${tr.catatan || ''})`;
+          }
+        }
+
+        if (isRelevant) {
+          if (isMasuk) totalMasuk += tr.jumlah; else totalKeluar += tr.jumlah;
+          mutasiHtml += `
+            <div class="flex justify-between items-center bg-gray-50 dark:bg-gray-900 p-2.5 rounded-xl border dark:border-gray-700">
+              <div>
+                <span class="font-semibold text-gray-700 dark:text-gray-200">${tr.tanggal} - ${desc}</span>
+                <p class="text-gray-400 text-[10px]">${tr.tipe}</p>
+              </div>
+              <span class="font-bold ${isMasuk ? 'text-emerald-600' : 'text-red-600'}">
+                ${isMasuk ? '+' : '-'} Rp ${tr.jumlah.toLocaleString('id-ID')}
+              </span>
+            </div>
+          `;
+        }
       });
 
+      const saldoAkhir = totalMasuk - totalKeluar;
+      document.getElementById('detailRekeningTitle').innerText = `Mutasi: ${rekName}`;
+      document.getElementById('detailRekeningSaldo').innerText = `Saldo Akhir: Rp ${saldoAkhir.toLocaleString('id-ID')}`;
+      document.getElementById('detailMutasiList').innerHTML = mutasiHtml || '<p class="text-xs text-gray-400 italic text-center py-4">Tidak ada transaksi pada rekening ini.</p>';
+      document.getElementById('modalDetailRekening').classList.remove('hidden');
+    }
+
+    function closeDetailRekening() { document.getElementById('modalDetailRekening').classList.add('hidden'); }
+
+    function downloadRekeningExcel() {
+      const filtered = filterDataByPeriod();
+      let csv = "Tanggal,Tipe,Keterangan,Jumlah (Rp)\n";
+      filtered.forEach(tr => {
+        if (tr.rekAsal === activeDetailRekeningName || tr.rekTujuan === activeDetailRekeningName) {
+          csv += `"${tr.tanggal}","${tr.tipe}","${tr.catatan || tr.kategori}",${tr.jumlah}\n`;
+        }
+      });
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = `Laporan_Keuangan_${new Date().toISOString().split('T')[0]}.csv`;
+      link.download = `Mutasi_${activeDetailRekeningName}_${new Date().toISOString().split('T')[0]}.csv`;
       link.click();
     }
 
-    function downloadPDF() { window.print(); }
+    function downloadRekeningPDF() { window.print(); }
 
     function renderLaporanCharts(filteredData) {
       const saldoMap = {};
@@ -710,7 +822,7 @@
         type: 'pie',
         data: {
           labels: Object.keys(saldoMap),
-          datasets: [{ data: Object.values(saldoMap).map(v => v < 0 ? 0 : v), backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899'] }]
+          datasets: [{ data: Object.values(saldoMap).map(v => v < 0 ? 0 : v), backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899'], borderWidth: 2 }]
         },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
       });
@@ -721,7 +833,7 @@
         type: 'doughnut',
         data: {
           labels: ['Pemasukan', 'Pengeluaran'],
-          datasets: [{ data: [tMasuk, tKeluar], backgroundColor: ['#10b981', '#ef4444'] }]
+          datasets: [{ data: [tMasuk, tKeluar], backgroundColor: ['#10b981', '#ef4444'], borderWidth: 2 }]
         },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
       });
