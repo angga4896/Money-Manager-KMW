@@ -475,6 +475,7 @@
       renderTransaksi();
     }
 
+    // Kalkulasi Saldo Sambung Otomatis Antar Bulan
     function renderTransaksi() {
       const container = document.getElementById('listTransaksi');
       
@@ -502,14 +503,28 @@
         }
       });
 
+      // Hitung Saldo Kumulatif Sambung Otomatis sampai akhir bulan aktif ini
+      let kumulatifMasuk = 0;
+      let kumulatifKeluar = 0;
+      dbTransaksi.forEach((tx) => {
+        const tDate = new Date(tx.tanggal);
+        const amt = Number(tx.jumlah);
+        // Masukkan transaksi dari awal waktu hingga akhir bulan aktif
+        if (tDate.getFullYear() < targetYear || (tDate.getFullYear() === targetYear && tDate.getMonth() <= targetMonth)) {
+          if (tx.tipe === 'Pemasukan') kumulatifMasuk += amt;
+          else if (tx.tipe === 'Pengeluaran') kumulatifKeluar += amt;
+        }
+      });
+      const saldoAkhirKumulatif = kumulatifMasuk - kumulatifKeluar;
+
       document.getElementById('sumMasukBulan').innerText = 'Rp ' + sumMasukBulan.toLocaleString('id-ID');
       document.getElementById('sumKeluarBulan').innerText = 'Rp ' + sumKeluarBulan.toLocaleString('id-ID');
-      document.getElementById('sumSaldoBulan').innerText = 'Rp ' + (sumMasukBulan - sumKeluarBulan).toLocaleString('id-ID');
+      document.getElementById('sumSaldoBulan').innerText = 'Rp ' + saldoAkhirKumulatif.toLocaleString('id-ID');
 
       const sortedDates = Object.keys(groupedByDate).sort((a, b) => new Date(b) - new Date(a));
 
       if (sortedDates.length === 0) {
-        container.innerHTML = `<div class="text-center py-8 text-gray-400 text-sm">Tidak ada transaksi pada bulan ini.</div>`;
+        container.innerHTML = `<div class="text-center py-8 text-gray-400 text-sm">Tidak ada transaksi pada bulan ini. Saldo tersambung otomatis dari bulan sebelumnya.</div>`;
         return;
       }
 
@@ -706,7 +721,6 @@
 
     function closeDetailRekening() { document.getElementById('modalDetailRekening').classList.add('hidden'); }
 
-    // Format Unduh Excel Profesional (Format CSV Standar Tabular Bersih)
     function downloadRekeningExcel() {
       const filtered = filterDataByPeriod();
       let csv = `\uFEFFLAPORAN MUTASI REKENING: ${activeDetailRekeningName}\n`;
@@ -742,10 +756,7 @@
       link.click();
     }
 
-    // Cetak / Simpan PDF Profesional
-    function downloadRekeningPDF() {
-      window.print();
-    }
+    function downloadRekeningPDF() { window.print(); }
 
     function renderLaporanCharts(filteredData) {
       const saldoMap = {};
@@ -789,7 +800,6 @@
       });
     }
 
-    // Master Data & Form Handler
     function openMasterForm(jenis = 'rekening', namaLama = '') {
       document.getElementById('masterForm').reset();
       const titleEl = document.getElementById('masterFormTitle');
