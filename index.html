@@ -35,13 +35,13 @@
     .dark .card { background-color: #1e293b; border-color: #334155; }
   </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen">
+<body id="appBody" class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen">
 
   <!-- Header Minimalis Modern -->
   <header class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-700 px-5 py-4 sticky top-0 z-20 flex justify-between items-center shadow-sm">
     <div class="flex items-center gap-2.5">
       <img id="app-logo-img" src="icon.rp.png" alt="Logo" class="w-7 h-7 object-contain">
-      <span class="font-extrabold text-base tracking-tight" id="app-title-text">Money Manager KMW</span>
+      <span class="font-extrabold text-base tracking-tight" id="app-title-text">Money Manager KM</span>
     </div>
     <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 transition hover:scale-105">
       <i id="darkIcon" class="fa-solid fa-moon text-sm"></i>
@@ -121,21 +121,18 @@
             <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">URL / Link Icon / Logo Aplikasi</label>
             <input type="text" id="set-logo-url" value="icon.rp.png" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
           </div>
-          <button onclick="saveThemeSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-3 rounded-xl text-xs shadow-sm transition">💾 Simpan Perubahan Tema</button>
+          <button onclick="saveThemeSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-3 rounded-xl text-xs shadow-sm transition">💾 Simpan & Terapkan Perubahan</button>
         </div>
       </div>
 
       <div class="card p-5 shadow-sm space-y-4">
-        <div class="flex justify-between items-center">
-          <h2 class="font-bold text-sm text-slate-800 dark:text-slate-100">⚙️ Master Akun & Kategori</h2>
-          <button onclick="openMasterForm()" class="bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow-sm">+ Tambah Baru</button>
-        </div>
+        <h2 class="font-bold text-sm text-slate-800 dark:text-slate-100">⚙️ Master Akun & Kategori</h2>
         <div id="masterList" class="space-y-3"></div>
       </div>
     </div>
   </main>
 
-  <!-- FLOATING ACTION BUTTON (FAB) - DINAMIS SESUAI MENU -->
+  <!-- FLOATING ACTION BUTTON (FAB) - HANYA MUNCUL DI MENU TERKAIT -->
   <div id="fabTransaksiContainer" class="fixed bottom-20 right-5 z-40">
     <button onclick="openForm(null)" class="w-14 h-14 bg-gradient-to-tr from-emerald-600 to-teal-500 hover:from-emerald-700 hover:to-teal-600 text-white rounded-full shadow-lg shadow-emerald-600/30 flex items-center justify-center text-xl transition transform hover:scale-110 active:scale-95" title="Tambah Transaksi">
       <i class="fa-solid fa-plus"></i>
@@ -298,8 +295,9 @@
       #modalDetailRekening, #modalDetailRekening * { visibility: visible; }
       #modalDetailRekening { position: absolute; left: 0; top: 0; width: 100%; height: auto; background: white !important; box-shadow: none !important; }
       button, .fa-solid { display: none !important; }
-      table { width: 100% !important; border-collapse: collapse; font-size: 11px; }
-      th, td { border: 1px solid #cbd5e1 !important; padding: 6px !important; color: #000 !important; }
+      table { width: 100% !important; border-collapse: collapse; font-size: 11px; margin-top: 10px; }
+      th { background-color: #f1f5f9 !important; color: #000 !important; border: 1px solid #94a3b8 !important; padding: 6px !important; }
+      td { border: 1px solid #cbd5e1 !important; padding: 6px !important; color: #000 !important; }
     }
   </style>
 
@@ -773,9 +771,10 @@
 
     function closeDetailRekening() { document.getElementById('modalDetailRekening').classList.add('hidden'); }
 
+    // Format Excel Bersih & Rapi Terstruktur
     function downloadRekeningExcel() {
       const filtered = filterDataByPeriod();
-      let csv = `\uFEFFLAPORAN MUTASI REKENING: ${activeDetailRekeningName}\n\n`;
+      let csv = `\uFEFF"LAPORAN MUTASI REKENING: ${activeDetailRekeningName}"\n\n`;
       csv += `"Tanggal","Tipe Transaksi","Keterangan","Jumlah (Rp)"\n`;
 
       filtered.forEach(tr => {
@@ -803,7 +802,7 @@
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = `Laporan_${activeDetailRekeningName}.csv`;
+      link.download = `Laporan_Mutasi_${activeDetailRekeningName.replace(/\s+/g, '_')}.csv`;
       link.click();
     }
 
@@ -924,12 +923,12 @@
       }
     }
 
-    // --- Pengaturan Tema & Custom Aplikasi (Dengan Tombol Save) ---
+    // --- Pengaturan Tema & Custom Aplikasi (Berfungsi Penuh) ---
     function saveThemeSettings() {
       const bgColor = document.getElementById('set-bg-color').value;
       const logoUrl = document.getElementById('set-logo-url').value;
 
-      document.documentElement.style.setProperty('--app-bg', bgColor);
+      document.body.style.backgroundColor = bgColor;
       document.getElementById('bgColorVal').innerText = bgColor;
 
       if (logoUrl) {
@@ -948,7 +947,7 @@
 
       if (savedBg) {
         document.getElementById('set-bg-color').value = savedBg;
-        document.documentElement.style.setProperty('--app-bg', savedBg);
+        document.body.style.backgroundColor = savedBg;
         document.getElementById('bgColorVal').innerText = savedBg;
       }
       if (savedLogo) {
