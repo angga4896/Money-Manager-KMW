@@ -3,7 +3,7 @@
 <head>
   <base target="_top">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Money Manager KM</title>
+  <title>Money Manager KMW</title>
   <!-- Tailwind CSS & FontAwesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -23,25 +23,25 @@
   </script>
   <style>
     :root {
-      --app-bg: #f8fafc;
+      --app-bg: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
       --card-bg: #ffffff;
       --text-color: #0f172a;
       --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       --font-size: 14px;
     }
     * { font-family: var(--font-family); }
-    body { background-color: var(--app-bg); color: var(--text-color); font-size: var(--font-size); padding-bottom: 100px; transition: background-color 0.3s; }
+    body { background: var(--app-bg); color: var(--text-color); font-size: var(--font-size); padding-bottom: 100px; min-height: 100vh; background-attachment: fixed; transition: background 0.4s ease; }
     .card { background-color: var(--card-bg); border-radius: 20px; border: 1px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01); }
     .dark .card { background-color: #1e293b; border-color: #334155; }
   </style>
 </head>
-<body id="appBody" class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen">
+<body id="appBody">
 
   <!-- Header Minimalis Modern -->
   <header class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-700 px-5 py-4 sticky top-0 z-20 flex justify-between items-center shadow-sm">
     <div class="flex items-center gap-2.5">
       <img id="app-logo-img" src="icon.rp.png" alt="Logo" class="w-7 h-7 object-contain">
-      <span class="font-extrabold text-base tracking-tight" id="app-title-text">Money Manager KM</span>
+      <span class="font-extrabold text-base tracking-tight" id="app-title-text">Money Manager KMW</span>
     </div>
     <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 transition hover:scale-105">
       <i id="darkIcon" class="fa-solid fa-moon text-sm"></i>
@@ -108,20 +108,22 @@
     <!-- 3. HALAMAN PENGATURAN -->
     <div id="page-pengaturan" class="space-y-4 hidden">
       <div class="card p-5 shadow-sm space-y-4">
-        <h2 class="font-bold text-sm text-slate-800 dark:text-slate-100">🎨 Pengaturan Tema & Custom Aplikasi</h2>
+        <h2 class="font-bold text-sm text-slate-800 dark:text-slate-100">🎨 Pilihan Tema Gradasi Modern</h2>
         <div class="space-y-3">
           <div>
-            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Warna Background Aplikasi</label>
-            <div class="flex items-center gap-3">
-              <input type="color" id="set-bg-color" value="#f8fafc" class="w-12 h-10 rounded-xl cursor-pointer bg-transparent border border-slate-200 p-1">
-              <span class="text-xs text-slate-500 font-medium" id="bgColorVal">Pilih warna latar belakang</span>
+            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Pilih Variasi Warna Gradasi</label>
+            <div class="grid grid-cols-2 gap-2">
+              <button onclick="setGradientTheme('linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)', 'Minimalis Abu')" class="p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-gradient-to-tr from-slate-100 to-slate-200 text-xs font-bold text-slate-700 shadow-sm hover:scale-[1.02] transition">Minimalis Abu</button>
+              <button onclick="setGradientTheme('linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)', 'Emerald Minimal')" class="p-3 rounded-xl border border-emerald-200 bg-gradient-to-tr from-emerald-50 to-teal-100 text-xs font-bold text-emerald-800 shadow-sm hover:scale-[1.02] transition">Emerald Clean</button>
+              <button onclick="setGradientTheme('linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)', 'Ocean Blue')" class="p-3 rounded-xl border border-blue-200 bg-gradient-to-tr from-blue-50 to-indigo-100 text-xs font-bold text-blue-800 shadow-sm hover:scale-[1.02] transition">Ocean Blue</button>
+              <button onclick="setGradientTheme('linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%)', 'Sunset Soft')" class="p-3 rounded-xl border border-purple-200 bg-gradient-to-tr from-purple-50 to-pink-100 text-xs font-bold text-purple-800 shadow-sm hover:scale-[1.02] transition">Sunset Soft</button>
             </div>
           </div>
           <div>
             <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">URL / Link Icon / Logo Aplikasi</label>
             <input type="text" id="set-logo-url" value="icon.rp.png" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
           </div>
-          <button onclick="saveThemeSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-3 rounded-xl text-xs shadow-sm transition">💾 Simpan & Terapkan Perubahan</button>
+          <button onclick="saveThemeSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-3 rounded-xl text-xs shadow-sm transition">💾 Simpan Perubahan Tema</button>
         </div>
       </div>
 
@@ -316,6 +318,7 @@
     let currentFilter = { mode: 'monthly', start: '', end: '' };
     let activeDetailRekeningName = '';
     let activeTransactionDate = new Date();
+    let selectedGradient = 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)';
 
     document.addEventListener("DOMContentLoaded", () => {
       document.getElementById('txTanggal').value = new Date().toISOString().split('T')[0];
@@ -655,7 +658,6 @@
       renderLaporanCharts(filtered);
     }
 
-    // Mutasi Rekening Detail Dipisah Per Bulan Secara Profesional & Rapi
     function openDetailRekening(rekName) {
       activeDetailRekeningName = rekName;
       const filtered = filterDataByPeriod();
@@ -771,7 +773,6 @@
 
     function closeDetailRekening() { document.getElementById('modalDetailRekening').classList.add('hidden'); }
 
-    // Format Excel Bersih & Rapi Terstruktur
     function downloadRekeningExcel() {
       const filtered = filterDataByPeriod();
       let csv = `\uFEFF"LAPORAN MUTASI REKENING: ${activeDetailRekeningName}"\n\n`;
@@ -923,32 +924,37 @@
       }
     }
 
-    // --- Pengaturan Tema & Custom Aplikasi (Berfungsi Penuh) ---
+    // --- Pengaturan Tema Gradasi & Custom Aplikasi ---
+    function setGradientTheme(gradientStr, name) {
+      selectedGradient = gradientStr;
+      document.body.style.background = gradientStr;
+      document.body.style.backgroundAttachment = 'fixed';
+    }
+
     function saveThemeSettings() {
-      const bgColor = document.getElementById('set-bg-color').value;
       const logoUrl = document.getElementById('set-logo-url').value;
 
-      document.body.style.backgroundColor = bgColor;
-      document.getElementById('bgColorVal').innerText = bgColor;
+      document.body.style.background = selectedGradient;
+      document.body.style.backgroundAttachment = 'fixed';
 
       if (logoUrl) {
         document.getElementById('app-logo-img').src = logoUrl;
       }
 
-      localStorage.setItem('mm_custom_bg', bgColor);
+      localStorage.setItem('mm_custom_gradient', selectedGradient);
       localStorage.setItem('mm_custom_logo', logoUrl);
 
-      alert("Peraturan tema & kustomisasi berhasil disimpan!");
+      alert("Tema gradasi & pengaturan berhasil disimpan!");
     }
 
     function loadThemeSettings() {
-      const savedBg = localStorage.getItem('mm_custom_bg');
+      const savedGradient = localStorage.getItem('mm_custom_gradient');
       const savedLogo = localStorage.getItem('mm_custom_logo');
 
-      if (savedBg) {
-        document.getElementById('set-bg-color').value = savedBg;
-        document.body.style.backgroundColor = savedBg;
-        document.getElementById('bgColorVal').innerText = savedBg;
+      if (savedGradient) {
+        selectedGradient = savedGradient;
+        document.body.style.background = savedGradient;
+        document.body.style.backgroundAttachment = 'fixed';
       }
       if (savedLogo) {
         document.getElementById('set-logo-url').value = savedLogo;
