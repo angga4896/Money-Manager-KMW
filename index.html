@@ -148,7 +148,7 @@
     </div>
   </main>
 
-  <!-- TOMBOL FAB DINAMIS -->
+  <!-- TOMBOL FAB DINAMIS YANG MEMBUKA MENU PILIHAN TRANSAKSI -->
   <button id="mainFabBtn" onclick="handleFabClick()" class="fab-btn" title="Aksi Cepat">
     <i id="fabIcon" class="fa-solid fa-plus text-xl"></i>
   </button>
@@ -172,6 +172,30 @@
   <!-- DATALIST GLOBAL -->
   <datalist id="listRekening"></datalist>
   <datalist id="listKategori"></datalist>
+
+  <!-- MODAL POP-UP MENU PILIHAN TRANSAKSI (PEMASUKAN, PENGELUARAN, TRANSFER) -->
+  <div id="modalPilihanTransaksi" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-4">
+    <div class="card bg-white dark:bg-slate-800 w-full max-w-sm p-5 rounded-2xl shadow-xl space-y-3 animate-fade-in-up">
+      <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-700 pb-3">
+        <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100">Pilih Jenis Transaksi</h3>
+        <button onclick="closePilihanTransaksiModal()" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark text-sm"></i></button>
+      </div>
+      <div class="space-y-2 py-1">
+        <button onclick="openTransaksiModal('Pemasukan')" class="w-full bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 font-bold p-3 rounded-xl text-xs flex items-center gap-3 transition">
+          <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center"><i class="fa-solid fa-circle-arrow-down"></i></div>
+          <span>Buat Pemasukan</span>
+        </button>
+        <button onclick="openTransaksiModal('Pengeluaran')" class="w-full bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 font-bold p-3 rounded-xl text-xs flex items-center gap-3 transition">
+          <div class="w-8 h-8 rounded-lg bg-red-500 text-white flex items-center justify-center"><i class="fa-solid fa-circle-arrow-up"></i></div>
+          <span>Buat Pengeluaran</span>
+        </button>
+        <button onclick="openTransaksiModal('Transfer')" class="w-full bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-400 font-bold p-3 rounded-xl text-xs flex items-center gap-3 transition">
+          <div class="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center"><i class="fa-solid fa-right-left"></i></div>
+          <span>Buat Transfer Antar Rekening</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- MODAL KUSTOMISASI TEMA & TAMPILAN -->
   <div id="modalCustomization" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -373,7 +397,6 @@
         document.getElementById('darkIcon').className = "fa-solid fa-sun";
       }
       
-      // Load Saved Customizations
       const savedTitle = localStorage.getItem('mm_title');
       const savedLogo = localStorage.getItem('mm_logo');
       const savedTheme = localStorage.getItem('mm_theme_variant') || 'emerald';
@@ -473,7 +496,7 @@
       } else {
         fabBtn.classList.remove('hidden');
         if (tab === 'transaksi') {
-          fabBtn.title = "Tambah Transaksi";
+          fabBtn.title = "Buat Transaksi Baru";
           fabIcon.className = "fa-solid fa-plus text-xl";
         } else if (tab === 'pengaturan') {
           fabBtn.title = "Tambah Master Data Baru";
@@ -486,19 +509,34 @@
       }
     }
 
+    // Fungsi klik FAB: Membuka pilihan menu transaksi atau form master
     function handleFabClick() {
       if (currentActiveTab === 'transaksi') {
-        openTransaksiModal();
+        openPilihanTransaksiModal();
       } else if (currentActiveTab === 'pengaturan') {
         openMasterForm();
       }
     }
 
-    function openTransaksiModal() {
+    function openPilihanTransaksiModal() {
+      document.getElementById('modalPilihanTransaksi').classList.remove('hidden');
+    }
+
+    function closePilihanTransaksiModal() {
+      document.getElementById('modalPilihanTransaksi').classList.add('hidden');
+    }
+
+    function openTransaksiModal(tipeTransaksi) {
+      closePilihanTransaksiModal();
       document.getElementById('txForm').reset();
       document.getElementById('txRowIndex').value = '';
       document.getElementById('txTanggal').value = new Date().toISOString().split('T')[0];
-      document.getElementById('formTitle').innerText = 'Tambah Transaksi';
+      
+      if (tipeTransaksi) {
+        document.getElementById('txTipe').value = tipeTransaksi;
+      }
+      
+      document.getElementById('formTitle').innerText = 'Buat ' + (tipeTransaksi || 'Transaksi');
       onTipeChange();
       document.getElementById('modalTransaksi').classList.remove('hidden');
     }
@@ -696,7 +734,7 @@
     }
 
     function openFormForEdit(tx) {
-      openTransaksiModal();
+      openTransaksiModal(tx.tipe);
       document.getElementById('formTitle').innerText = 'Edit Transaksi';
       document.getElementById('txRowIndex').value = tx.rowIndex;
       document.getElementById('txTanggal').value = tx.tanggal;
