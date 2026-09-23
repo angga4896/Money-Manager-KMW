@@ -30,7 +30,7 @@
       --font-size: 14px;
     }
     * { font-family: var(--font-family); }
-    body { background-color: var(--app-bg); color: var(--text-color); font-size: var(--font-size); padding-bottom: 50px; }
+    body { background-color: var(--app-bg); color: var(--text-color); font-size: var(--font-size); padding-bottom: 60px; }
     .card { background-color: var(--card-bg); border-radius: 16px; border: 1px solid #f1f5f9; }
     .dark .card { background-color: #1e293b; border-color: #334155; }
     /* Tombol FAB Melayang Clean & Minimalis */
@@ -54,7 +54,7 @@
       <span class="font-bold text-base tracking-tight" id="app-title-text">Money Manager KMW</span>
     </div>
     
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-1.5">
       <button onclick="switchTab('transaksi')" id="nav-transaksi" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 transition">Transaksi</button>
       <button onclick="switchTab('laporan')" id="nav-laporan" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-700 dark:text-slate-400 transition">Laporan</button>
       <button onclick="switchTab('pengaturan')" id="nav-pengaturan" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-700 dark:text-slate-400 transition">Pengaturan</button>
@@ -68,67 +68,11 @@
   <main class="max-w-md mx-auto p-4">
     <input type="hidden" id="txRowIndex" value="">
 
-    <!-- 1. HALAMAN TRANSAKSI -->
+    <!-- 1. HALAMAN TRANSAKSI (Hanya Riwayat Mutasi Per Hari & Bulan) -->
     <div id="page-transaksi" class="space-y-4">
-      <div class="card p-1.5 flex gap-1 bg-white dark:bg-slate-800 shadow-sm">
-        <button onclick="switchSubTab('input', this)" id="subTabInputBtn" class="flex-1 py-2 text-xs font-bold rounded-xl bg-emerald-600 text-white transition shadow-sm">➕ Input Transaksi</button>
-        <button onclick="switchSubTab('mutasi', this)" id="subTabMutasiBtn" class="flex-1 py-2 text-xs font-bold rounded-xl text-slate-500 dark:text-slate-400 transition">📜 Mutasi Rekening</button>
-      </div>
-
-      <div id="subContainerInput" class="card p-5 shadow-sm space-y-4">
-        <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-700 pb-3">
-          <h2 id="formTitle" class="font-bold text-sm text-slate-800 dark:text-slate-100">Tambah Transaksi</h2>
-          <span id="currentDate" class="text-xs text-slate-400"></span>
-        </div>
-
-        <form id="txForm" onsubmit="handleFormSubmit(event)" class="space-y-3.5">
-          <div>
-            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Tipe Transaksi</label>
-            <select id="txTipe" onchange="onTipeChange()" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs font-semibold focus:outline-none focus:border-emerald-500">
-              <option value="Pemasukan">Pemasukan</option>
-              <option value="Pengeluaran">Pengeluaran</option>
-              <option value="Transfer">Transfer</option>
-            </select>
-          </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Tanggal</label>
-              <input type="date" id="txTanggal" required class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Jumlah (Rp)</label>
-              <input type="number" id="txJumlah" placeholder="0" required class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs font-bold focus:outline-none focus:border-emerald-500">
-            </div>
-          </div>
-
-          <div>
-            <label id="labelRekAsal" class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Rekening / Akun</label>
-            <input list="listRekening" id="txRekAsal" placeholder="Pilih atau ketik akun baru..." required autocomplete="off" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
-          </div>
-
-          <div id="fieldRekTujuan" class="hidden">
-            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Rekening Tujuan</label>
-            <input list="listRekening" id="txRekTujuan" placeholder="Pilih atau ketik rekening tujuan..." autocomplete="off" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
-          </div>
-
-          <div id="fieldKategori">
-            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Kategori</label>
-            <input list="listKategori" id="txKategori" placeholder="Pilih atau ketik kategori baru..." autocomplete="off" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Catatan</label>
-            <textarea id="txCatatan" rows="2" placeholder="Catatan opsional..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500"></textarea>
-          </div>
-
-          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-3 rounded-xl text-xs shadow-md transition">Simpan Transaksi</button>
-        </form>
-      </div>
-
-      <div id="subContainerMutasi" class="card p-5 shadow-sm space-y-4 hidden">
+      <div class="card p-5 shadow-sm space-y-4">
         <div class="flex justify-between items-center">
-          <h2 class="font-bold text-sm text-slate-800 dark:text-slate-100">Mutasi Rekening Bulanan</h2>
+          <h2 class="font-bold text-sm text-slate-800 dark:text-slate-100">Riwayat Mutasi & Transaksi</h2>
           <div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-700 px-3 py-1 rounded-xl">
             <button onclick="changeMonth(-1)" class="text-slate-500 hover:text-emerald-600 px-1"><i class="fa-solid fa-chevron-left text-xs"></i></button>
             <span id="labelBulanAktif" class="text-xs font-bold text-slate-700 dark:text-slate-200">-</span>
@@ -179,30 +123,30 @@
       </div>
     </div>
 
-    <!-- 3. HALAMAN PENGATURAN -->
+    <!-- 3. HALAMAN PENGATURAN (Hanya Daftar Akun & Tombol Buka Pop-up Kustomisasi) -->
     <div id="page-pengaturan" class="space-y-4 hidden">
-      <div class="card p-5 shadow-sm space-y-3">
-        <h2 class="font-bold text-sm text-slate-800 dark:text-slate-100">🎨 Pengaturan Tema & Tampilan</h2>
-        <div>
-          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Nama Aplikasi</label>
-          <input type="text" id="set-app-title" value="Money Manager KMW" oninput="updateThemeSettings()" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
-        </div>
-        <div>
-          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">URL / Link Logo Aplikasi</label>
-          <input type="text" id="set-logo-url" value="icon.rp.png" oninput="updateThemeSettings()" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
+      <div class="card p-5 shadow-sm space-y-4">
+        <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-700 pb-3">
+          <div>
+            <h2 class="font-bold text-sm text-slate-800 dark:text-slate-100">🎨 Kustomisasi Aplikasi</h2>
+            <p class="text-[11px] text-slate-400">Atur nama dan logo aplikasi Anda</p>
+          </div>
+          <button onclick="openCustomizationModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-2 rounded-xl text-xs shadow-sm transition">
+            <i class="fa-solid fa-gear mr-1"></i> Buka Pengaturan
+          </button>
         </div>
       </div>
 
       <div class="card p-5 shadow-sm space-y-4">
         <div class="flex justify-between items-center">
-          <h2 class="font-bold text-sm text-slate-800 dark:text-slate-100">⚙️ Master Akun & Kategori</h2>
+          <h2 class="font-bold text-sm text-slate-800 dark:text-slate-100">⚙️ Daftar Akun & Kategori Master</h2>
         </div>
         <div id="masterList" class="space-y-3"></div>
       </div>
     </div>
   </main>
 
-  <!-- TOMBOL FAB DINAMIS (BERUBAH OTOMATIS SESUAI MENU AKTIF) -->
+  <!-- TOMBOL FAB DINAMIS (BERUBAH OTOMATIS SESUAI MENU) -->
   <button id="mainFabBtn" onclick="handleFabClick()" class="fab-btn" title="Aksi Cepat">
     <i id="fabIcon" class="fa-solid fa-plus text-xl"></i>
   </button>
@@ -210,6 +154,81 @@
   <!-- DATALIST GLOBAL -->
   <datalist id="listRekening"></datalist>
   <datalist id="listKategori"></datalist>
+
+  <!-- MODAL POP-UP KUSTOMISASI APLIKASI -->
+  <div id="modalCustomization" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="card bg-white dark:bg-slate-800 w-full max-w-sm p-5 rounded-2xl shadow-xl space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-700 pb-3">
+        <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100">Pengaturan Kustomisasi</h3>
+        <button onclick="closeCustomizationModal()" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark text-sm"></i></button>
+      </div>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Nama Aplikasi</label>
+          <input type="text" id="set-app-title" value="Money Manager KMW" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">URL / Link Logo Aplikasi</label>
+          <input type="text" id="set-logo-url" value="icon.rp.png" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
+        </div>
+      </div>
+      <button onclick="saveCustomizationSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-3 rounded-xl text-xs shadow-md transition">Simpan Perubahan</button>
+    </div>
+  </div>
+
+  <!-- MODAL FORM TAMBAH TRANSAKSI -->
+  <div id="modalTransaksi" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="card bg-white dark:bg-slate-800 w-full max-w-md p-5 rounded-2xl shadow-xl space-y-4 max-h-[92vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-700 pb-3">
+        <h2 id="formTitle" class="font-bold text-sm text-slate-800 dark:text-slate-100">Tambah Transaksi</h2>
+        <button onclick="closeTransaksiModal()" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form id="txForm" onsubmit="handleFormSubmit(event)" class="space-y-3.5">
+        <div>
+          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Tipe Transaksi</label>
+          <select id="txTipe" onchange="onTipeChange()" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs font-semibold focus:outline-none focus:border-emerald-500">
+            <option value="Pemasukan">Pemasukan</option>
+            <option value="Pengeluaran">Pengeluaran</option>
+            <option value="Transfer">Transfer</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Tanggal</label>
+            <input type="date" id="txTanggal" required class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Jumlah (Rp)</label>
+            <input type="number" id="txJumlah" placeholder="0" required class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs font-bold focus:outline-none focus:border-emerald-500">
+          </div>
+        </div>
+
+        <div>
+          <label id="labelRekAsal" class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Rekening / Akun</label>
+          <input list="listRekening" id="txRekAsal" placeholder="Pilih atau ketik akun..." required autocomplete="off" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
+        </div>
+
+        <div id="fieldRekTujuan" class="hidden">
+          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Rekening Tujuan</label>
+          <input list="listRekening" id="txRekTujuan" placeholder="Pilih atau ketik rekening tujuan..." autocomplete="off" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
+        </div>
+
+        <div id="fieldKategori">
+          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Kategori</label>
+          <input list="listKategori" id="txKategori" placeholder="Pilih atau ketik kategori..." autocomplete="off" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Catatan</label>
+          <textarea id="txCatatan" rows="2" placeholder="Catatan opsional..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500"></textarea>
+        </div>
+
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-3 rounded-xl text-xs shadow-md transition">Simpan Transaksi</button>
+      </form>
+    </div>
+  </div>
 
   <!-- MODAL DETAIL REKENING PROFESIONAL -->
   <div id="modalDetailRekening" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -310,7 +329,6 @@
     let currentActiveTab = 'transaksi';
 
     document.addEventListener("DOMContentLoaded", () => {
-      document.getElementById('currentDate').innerText = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
       document.getElementById('printDate').innerText = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
       document.getElementById('txTanggal').value = new Date().toISOString().split('T')[0];
       
@@ -404,15 +422,15 @@
         activeNav.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 transition";
       }
 
-      // Pengaturan Tombol FAB Dinamis Sesuai Menu Aktif
+      // Kontrol Tombol FAB Sesuai Menu Aktif
       const fabBtn = document.getElementById('mainFabBtn');
       const fabIcon = document.getElementById('fabIcon');
       if (tab === 'laporan') {
-        fabBtn.classList.add('hidden'); // Sembunyikan FAB di menu laporan karena ringkasan
+        fabBtn.classList.add('hidden');
       } else {
         fabBtn.classList.remove('hidden');
         if (tab === 'transaksi') {
-          fabBtn.title = "Input Transaksi Baru";
+          fabBtn.title = "Tambah Transaksi";
           fabIcon.className = "fa-solid fa-plus text-xl";
         } else if (tab === 'pengaturan') {
           fabBtn.title = "Tambah Master Data Baru";
@@ -425,34 +443,49 @@
       }
     }
 
-    // Aksi Langsung Tombol FAB Berdasarkan Menu yang Sedang Dibuka
+    // Aksi Tombol FAB Berdasarkan Menu Aktif
     function handleFabClick() {
       if (currentActiveTab === 'transaksi') {
-        switchSubTab('input', document.getElementById('subTabInputBtn'));
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        openTransaksiModal();
       } else if (currentActiveTab === 'pengaturan') {
         openMasterForm();
       }
     }
 
-    function switchSubTab(sub, btn) {
-      const btnInput = document.getElementById('subTabInputBtn');
-      const btnMutasi = document.getElementById('subTabMutasiBtn');
-      const contInput = document.getElementById('subContainerInput');
-      const contMutasi = document.getElementById('subContainerMutasi');
+    function openTransaksiModal() {
+      document.getElementById('txForm').reset();
+      document.getElementById('txRowIndex').value = '';
+      document.getElementById('txTanggal').value = new Date().toISOString().split('T')[0];
+      document.getElementById('formTitle').innerText = 'Tambah Transaksi';
+      onTipeChange();
+      document.getElementById('modalTransaksi').classList.remove('hidden');
+    }
 
-      if (sub === 'input') {
-        btnInput.className = "flex-1 py-2 text-xs font-bold rounded-xl bg-emerald-600 text-white transition shadow-sm";
-        btnMutasi.className = "flex-1 py-2 text-xs font-bold rounded-xl text-slate-500 dark:text-slate-400 transition";
-        contInput.classList.remove('hidden');
-        contMutasi.classList.add('hidden');
-      } else {
-        btnMutasi.className = "flex-1 py-2 text-xs font-bold rounded-xl bg-emerald-600 text-white transition shadow-sm";
-        btnInput.className = "flex-1 py-2 text-xs font-bold rounded-xl text-slate-500 dark:text-slate-400 transition";
-        contMutasi.classList.remove('hidden');
-        contInput.classList.add('hidden');
-        renderTransaksi();
+    function closeTransaksiModal() {
+      document.getElementById('modalTransaksi').classList.add('hidden');
+    }
+
+    function openCustomizationModal() {
+      document.getElementById('modalCustomization').classList.remove('hidden');
+    }
+
+    function closeCustomizationModal() {
+      document.getElementById('modalCustomization').classList.add('hidden');
+    }
+
+    function saveCustomizationSettings() {
+      const titleText = document.getElementById('set-app-title').value;
+      const logoUrl = document.getElementById('set-logo-url').value;
+      
+      if (titleText) {
+        document.getElementById('app-title-text').innerText = titleText;
+        localStorage.setItem('mm_title', titleText);
       }
+      if (logoUrl) {
+        document.getElementById('app-logo-img').src = logoUrl;
+        localStorage.setItem('mm_logo', logoUrl);
+      }
+      closeCustomizationModal();
     }
 
     function onTipeChange() {
@@ -524,7 +557,7 @@
       const sortedDates = Object.keys(groupedByDate).sort((a, b) => new Date(b) - new Date(a));
 
       if (sortedDates.length === 0) {
-        container.innerHTML = `<div class="text-center py-8 text-slate-400 text-xs italic">Tidak ada transaksi pada bulan ini. Saldo tersambung otomatis dari bulan sebelumnya.</div>`;
+        container.innerHTML = `<div class="text-center py-8 text-slate-400 text-xs italic">Tidak ada transaksi pada bulan ini.</div>`;
         return;
       }
 
@@ -584,7 +617,7 @@
     }
 
     function openFormForEdit(tx) {
-      switchSubTab('input', document.getElementById('subTabInputBtn'));
+      openTransaksiModal();
       document.getElementById('formTitle').innerText = 'Edit Transaksi';
       document.getElementById('txRowIndex').value = tx.rowIndex;
       document.getElementById('txTanggal').value = tx.tanggal;
@@ -613,12 +646,7 @@
 
       const action = rowIndex ? 'editTransaksi' : 'simpanTransaksi';
       postToBackend(action, payload);
-      document.getElementById('txForm').reset();
-      document.getElementById('txRowIndex').value = '';
-      document.getElementById('txTanggal').value = new Date().toISOString().split('T')[0];
-      document.getElementById('formTitle').innerText = 'Tambah Transaksi';
-      onTipeChange();
-      switchSubTab('mutasi', document.getElementById('subTabMutasiBtn'));
+      closeTransaksiModal();
     }
 
     function openFilterModal() { document.getElementById('modalFilter').classList.remove('hidden'); }
@@ -918,7 +946,7 @@
         namaEl.value = namaLama;
         oldNamaEl.value = namaLama;
       } else {
-        titleEl.innerText = "Tambah Master Data";
+        titleEl.innerText = "Tambah Master Data Baru";
         jenisEl.disabled = false;
         oldNamaEl.value = "";
       }
@@ -974,20 +1002,6 @@
     function hapusMaster(jenis, nama) {
       if(confirm(`Hapus ${nama}?`)) {
         postToBackend('hapusMaster', { jenis, nama });
-      }
-    }
-
-    function updateThemeSettings() {
-      const titleText = document.getElementById('set-app-title').value;
-      const logoUrl = document.getElementById('set-logo-url').value;
-      
-      if (titleText) {
-        document.getElementById('app-title-text').innerText = titleText;
-        localStorage.setItem('mm_title', titleText);
-      }
-      if (logoUrl) {
-        document.getElementById('app-logo-img').src = logoUrl;
-        localStorage.setItem('mm_logo', logoUrl);
       }
     }
   </script>
