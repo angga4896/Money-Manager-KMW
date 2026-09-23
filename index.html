@@ -30,19 +30,19 @@
       --font-size: 14px;
     }
     * { font-family: var(--font-family); }
-    body { background-color: var(--app-bg); color: var(--text-color); font-size: var(--font-size); padding-bottom: 90px; }
+    body { background-color: var(--app-bg); color: var(--text-color); font-size: var(--font-size); padding-bottom: 50px; }
     .card { background-color: var(--card-bg); border-radius: 16px; border: 1px solid #f1f5f9; }
     .dark .card { background-color: #1e293b; border-color: #334155; }
     /* Tombol FAB Melayang Clean & Minimalis */
     .fab-btn {
-      position: fixed; right: 20px; bottom: 85px; z-index: 40;
-      width: 52px; height: 52px; border-radius: 50%;
+      position: fixed; right: 20px; bottom: 25px; z-index: 40;
+      width: 56px; height: 56px; border-radius: 50%;
       background-color: #059669; color: #ffffff;
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4);
+      box-shadow: 0 4px 16px rgba(5, 150, 105, 0.45);
       transition: transform 0.2s, background-color 0.2s;
     }
-    .fab-btn:hover { transform: scale(1.05); background-color: #047857; }
+    .fab-btn:hover { transform: scale(1.08); background-color: #047857; }
   </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen">
@@ -53,24 +53,28 @@
       <img id="app-logo-img" src="icon.rp.png" alt="Logo" class="w-7 h-7 object-contain">
       <span class="font-bold text-base tracking-tight" id="app-title-text">Money Manager KMW</span>
     </div>
-    <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 transition">
-      <i id="darkIcon" class="fa-solid fa-moon text-sm"></i>
-    </button>
+    
+    <div class="flex items-center gap-2">
+      <button onclick="switchTab('transaksi')" id="nav-transaksi" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 transition">Transaksi</button>
+      <button onclick="switchTab('laporan')" id="nav-laporan" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-700 dark:text-slate-400 transition">Laporan</button>
+      <button onclick="switchTab('pengaturan')" id="nav-pengaturan" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-700 dark:text-slate-400 transition">Pengaturan</button>
+      
+      <button onclick="toggleDarkMode()" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 transition ml-1">
+        <i id="darkIcon" class="fa-solid fa-moon text-xs"></i>
+      </button>
+    </div>
   </header>
 
   <main class="max-w-md mx-auto p-4">
     <input type="hidden" id="txRowIndex" value="">
 
-    <!-- 1. HALAMAN TRANSAKSI (Input & Mutasi Bulan) -->
+    <!-- 1. HALAMAN TRANSAKSI -->
     <div id="page-transaksi" class="space-y-4">
-      
-      <!-- Sub Tab Selector (Input vs Mutasi) -->
       <div class="card p-1.5 flex gap-1 bg-white dark:bg-slate-800 shadow-sm">
         <button onclick="switchSubTab('input', this)" id="subTabInputBtn" class="flex-1 py-2 text-xs font-bold rounded-xl bg-emerald-600 text-white transition shadow-sm">➕ Input Transaksi</button>
         <button onclick="switchSubTab('mutasi', this)" id="subTabMutasiBtn" class="flex-1 py-2 text-xs font-bold rounded-xl text-slate-500 dark:text-slate-400 transition">📜 Mutasi Rekening</button>
       </div>
 
-      <!-- Sub Form: Input Transaksi -->
       <div id="subContainerInput" class="card p-5 shadow-sm space-y-4">
         <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-700 pb-3">
           <h2 id="formTitle" class="font-bold text-sm text-slate-800 dark:text-slate-100">Tambah Transaksi</h2>
@@ -122,7 +126,6 @@
         </form>
       </div>
 
-      <!-- Sub Form: Mutasi Rekening Per Bulan -->
       <div id="subContainerMutasi" class="card p-5 shadow-sm space-y-4 hidden">
         <div class="flex justify-between items-center">
           <h2 class="font-bold text-sm text-slate-800 dark:text-slate-100">Mutasi Rekening Bulanan</h2>
@@ -152,7 +155,7 @@
       </div>
     </div>
 
-    <!-- 2. HALAMAN LAPORAN & ANALISIS -->
+    <!-- 2. HALAMAN LAPORAN -->
     <div id="page-laporan" class="space-y-4 hidden">
       <div class="card p-5 shadow-sm space-y-4">
         <div class="flex justify-between items-center">
@@ -193,55 +196,22 @@
       <div class="card p-5 shadow-sm space-y-4">
         <div class="flex justify-between items-center">
           <h2 class="font-bold text-sm text-slate-800 dark:text-slate-100">⚙️ Master Akun & Kategori</h2>
-          <button onclick="openMasterForm()" class="bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow-sm">+ Tambah Baru</button>
         </div>
         <div id="masterList" class="space-y-3"></div>
       </div>
     </div>
   </main>
 
-  <!-- TOMBOL FAB (FLOATING ACTION BUTTON) MINIMALIS DI BAHAN KANAN -->
-  <button onclick="openQuickActionMenu()" class="fab-btn" title="Aksi Cepat">
-    <i class="fa-solid fa-plus text-lg"></i>
+  <!-- TOMBOL FAB DINAMIS (BERUBAH OTOMATIS SESUAI MENU AKTIF) -->
+  <button id="mainFabBtn" onclick="handleFabClick()" class="fab-btn" title="Aksi Cepat">
+    <i id="fabIcon" class="fa-solid fa-plus text-xl"></i>
   </button>
-
-  <!-- BOTTOM NAVIGATION BAR -->
-  <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700 px-6 py-2.5 flex justify-around items-center z-30 shadow-lg">
-    <button onclick="switchTab('transaksi')" id="nav-transaksi" class="flex flex-col items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold transition">
-      <i class="fa-solid fa-receipt text-lg"></i>
-      <span class="text-[10px]">Transaksi</span>
-    </button>
-    <button onclick="switchTab('laporan')" id="nav-laporan" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition">
-      <i class="fa-solid fa-chart-pie text-lg"></i>
-      <span class="text-[10px]">Laporan</span>
-    </button>
-    <button onclick="switchTab('pengaturan')" id="nav-pengaturan" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition">
-      <i class="fa-solid fa-gear text-lg"></i>
-      <span class="text-[10px]">Pengaturan</span>
-    </button>
-  </nav>
 
   <!-- DATALIST GLOBAL -->
   <datalist id="listRekening"></datalist>
   <datalist id="listKategori"></datalist>
 
-  <!-- MODAL AKSI CEPAT FAB -->
-  <div id="modalQuickAction" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-4">
-    <div class="card bg-white dark:bg-slate-800 w-full max-w-sm p-5 rounded-3xl shadow-2xl space-y-3 animate-in fade-in duration-200">
-      <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-700 pb-2.5">
-        <h3 class="font-bold text-xs uppercase text-slate-400 tracking-wider">Menu Pintasan Cepat</h3>
-        <button onclick="closeQuickActionMenu()" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark text-sm"></i></button>
-      </div>
-      <button onclick="closeQuickActionMenu(); switchTab('transaksi'); switchSubTab('input', document.getElementById('subTabInputBtn'));" class="w-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 font-bold p-3 rounded-2xl text-xs flex items-center gap-3 transition">
-        <i class="fa-solid fa-circle-plus text-base"></i> Input Transaksi Baru
-      </button>
-      <button onclick="closeQuickActionMenu(); openMasterForm();" class="w-full bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200 font-bold p-3 rounded-2xl text-xs flex items-center gap-3 transition">
-        <i class="fa-solid fa-folder-plus text-base"></i> Tambah Master Data Baru
-      </button>
-    </div>
-  </div>
-
-  <!-- MODAL DETAIL REKENING PROFESIONAL (DIPISAH PER BULAN & SALDO AWAL) -->
+  <!-- MODAL DETAIL REKENING PROFESIONAL -->
   <div id="modalDetailRekening" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="card bg-white dark:bg-slate-800 w-full max-w-xl p-5 rounded-2xl shadow-xl space-y-4 max-h-[92vh] flex flex-col">
       <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-700 pb-3">
@@ -252,9 +222,7 @@
         <button onclick="closeDetailRekening()" class="text-slate-400 hover:text-red-500 text-sm"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <div class="overflow-y-auto flex-1 text-xs space-y-4" id="detailRekeningContentBody">
-        <!-- Konten laporan profesional per bulan dimasukkan secara dinamis -->
-      </div>
+      <div class="overflow-y-auto flex-1 text-xs space-y-4" id="detailRekeningContentBody"></div>
 
       <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 dark:border-slate-700">
         <button onclick="downloadRekeningExcel()" class="bg-emerald-600 text-white font-bold p-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5"><i class="fa-solid fa-file-excel"></i> Unduh Excel</button>
@@ -339,6 +307,7 @@
     let currentFilter = { mode: 'monthly', start: '', end: '' };
     let activeDetailRekeningName = '';
     let activeTransactionDate = new Date();
+    let currentActiveTab = 'transaksi';
 
     document.addEventListener("DOMContentLoaded", () => {
       document.getElementById('currentDate').innerText = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -420,20 +389,49 @@
     }
 
     function switchTab(tab) {
+      currentActiveTab = tab;
       ['transaksi', 'laporan', 'pengaturan'].forEach(t => {
         document.getElementById(`page-${t}`).classList.add('hidden');
         const nav = document.getElementById(`nav-${t}`);
-        nav.classList.remove('text-emerald-600', 'dark:text-emerald-400', 'font-bold');
-        nav.classList.add('text-slate-400');
+        if(nav) {
+          nav.className = "px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-700 dark:text-slate-400 transition";
+        }
       });
 
       document.getElementById(`page-${tab}`).classList.remove('hidden');
       const activeNav = document.getElementById(`nav-${tab}`);
-      activeNav.classList.remove('text-slate-400');
-      activeNav.classList.add('text-emerald-600', 'dark:text-emerald-400', 'font-bold');
+      if(activeNav) {
+        activeNav.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 transition";
+      }
+
+      // Pengaturan Tombol FAB Dinamis Sesuai Menu Aktif
+      const fabBtn = document.getElementById('mainFabBtn');
+      const fabIcon = document.getElementById('fabIcon');
+      if (tab === 'laporan') {
+        fabBtn.classList.add('hidden'); // Sembunyikan FAB di menu laporan karena ringkasan
+      } else {
+        fabBtn.classList.remove('hidden');
+        if (tab === 'transaksi') {
+          fabBtn.title = "Input Transaksi Baru";
+          fabIcon.className = "fa-solid fa-plus text-xl";
+        } else if (tab === 'pengaturan') {
+          fabBtn.title = "Tambah Master Data Baru";
+          fabIcon.className = "fa-solid fa-folder-plus text-lg";
+        }
+      }
 
       if (tab === 'laporan') {
         renderLaporanView();
+      }
+    }
+
+    // Aksi Langsung Tombol FAB Berdasarkan Menu yang Sedang Dibuka
+    function handleFabClick() {
+      if (currentActiveTab === 'transaksi') {
+        switchSubTab('input', document.getElementById('subTabInputBtn'));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (currentActiveTab === 'pengaturan') {
+        openMasterForm();
       }
     }
 
@@ -623,9 +621,6 @@
       switchSubTab('mutasi', document.getElementById('subTabMutasiBtn'));
     }
 
-    function openQuickActionMenu() { document.getElementById('modalQuickAction').classList.remove('hidden'); }
-    function closeQuickActionMenu() { document.getElementById('modalQuickAction').classList.add('hidden'); }
-
     function openFilterModal() { document.getElementById('modalFilter').classList.remove('hidden'); }
     function closeFilterModal() { document.getElementById('modalFilter').classList.add('hidden'); }
 
@@ -705,11 +700,8 @@
       renderLaporanCharts(filtered);
     }
 
-    // FUNGSI UTAMA: PEMBUATAN LAPORAN MUTASI PROFESIONAL DIKELOMPOKKAN PER BULAN
     function getGroupedMonthlyMutasi(rekName) {
-      // Urutkan transaksi dari terlama ke terbaru untuk akurasi saldo awal kumulatif
       const sortedAll = [...dbTransaksi].sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
-      
       const monthlyMap = {};
 
       sortedAll.forEach(tr => {
@@ -746,7 +738,6 @@
         }
       });
 
-      // Hitung saldo awal & mutasi per bulan secara berurutan waktu
       let runningSaldo = 0;
       const sortedMonthKeys = Object.keys(monthlyMap).sort();
 
@@ -841,7 +832,6 @@
 
     function closeDetailRekening() { document.getElementById('modalDetailRekening').classList.add('hidden'); }
 
-    // DOWNLOAD EXCEL REKAP PER BULAN
     function downloadRekeningExcel() {
       const groupedMonths = getGroupedMonthlyMutasi(activeDetailRekeningName);
       let csv = `\uFEFFLAPORAN KEUANGAN MUTASI REKENING: ${activeDetailRekeningName}\n\n`;
