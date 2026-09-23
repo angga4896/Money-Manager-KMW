@@ -30,12 +30,12 @@
       --font-size: 14px;
     }
     * { font-family: var(--font-family); }
-    body { background-color: var(--app-bg); color: var(--text-color); font-size: var(--font-size); padding-bottom: 60px; }
+    body { background-color: var(--app-bg); color: var(--text-color); font-size: var(--font-size); padding-bottom: 90px; }
     .card { background-color: var(--card-bg); border-radius: 16px; border: 1px solid #f1f5f9; }
     .dark .card { background-color: #1e293b; border-color: #334155; }
-    /* Tombol FAB Melayang Clean & Minimalis */
+    /* Tombol FAB Melayang Clean & Minimalis di atas Bottom Nav */
     .fab-btn {
-      position: fixed; right: 20px; bottom: 25px; z-index: 40;
+      position: fixed; right: 20px; bottom: 85px; z-index: 40;
       width: 56px; height: 56px; border-radius: 50%;
       background-color: #059669; color: #ffffff;
       display: flex; align-items: center; justify-content: center;
@@ -50,16 +50,12 @@
   <!-- Header Minimalis Modern -->
   <header class="bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 px-5 py-4 sticky top-0 z-20 flex justify-between items-center shadow-sm">
     <div class="flex items-center gap-2.5">
-      <img id="app-logo-img" src="icon.rp.png" alt="Logo" class="w-7 h-7 object-contain">
+      <img id="app-logo-img" src="icon.rp.png" alt="Logo" class="w-7 h-7 object-contain rounded-md">
       <span class="font-bold text-base tracking-tight" id="app-title-text">Money Manager KMW</span>
     </div>
     
-    <div class="flex items-center gap-1.5">
-      <button onclick="switchTab('transaksi')" id="nav-transaksi" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 transition">Transaksi</button>
-      <button onclick="switchTab('laporan')" id="nav-laporan" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-700 dark:text-slate-400 transition">Laporan</button>
-      <button onclick="switchTab('pengaturan')" id="nav-pengaturan" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-700 dark:text-slate-400 transition">Pengaturan</button>
-      
-      <button onclick="toggleDarkMode()" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 transition ml-1">
+    <div class="flex items-center gap-2">
+      <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 transition">
         <i id="darkIcon" class="fa-solid fa-moon text-xs"></i>
       </button>
     </div>
@@ -68,7 +64,7 @@
   <main class="max-w-md mx-auto p-4">
     <input type="hidden" id="txRowIndex" value="">
 
-    <!-- 1. HALAMAN TRANSAKSI (Hanya Riwayat Mutasi Per Hari & Bulan) -->
+    <!-- 1. HALAMAN TRANSAKSI (Riwayat Mutasi Per Hari & Bulan) -->
     <div id="page-transaksi" class="space-y-4">
       <div class="card p-5 shadow-sm space-y-4">
         <div class="flex justify-between items-center">
@@ -123,7 +119,7 @@
       </div>
     </div>
 
-    <!-- 3. HALAMAN PENGATURAN (Hanya Daftar Akun & Tombol Buka Pop-up Kustomisasi) -->
+    <!-- 3. HALAMAN PENGATURAN -->
     <div id="page-pengaturan" class="space-y-4 hidden">
       <div class="card p-5 shadow-sm space-y-4">
         <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-700 pb-3">
@@ -146,16 +142,32 @@
     </div>
   </main>
 
-  <!-- TOMBOL FAB DINAMIS (BERUBAH OTOMATIS SESUAI MENU) -->
+  <!-- TOMBOL FAB DINAMIS DI BAWAH KANAN -->
   <button id="mainFabBtn" onclick="handleFabClick()" class="fab-btn" title="Aksi Cepat">
     <i id="fabIcon" class="fa-solid fa-plus text-xl"></i>
   </button>
+
+  <!-- BOTTOM NAVIGATION BAR (TRANSAKSI, LAPORAN, PENGATURAN DI BAWAH) -->
+  <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border-t border-slate-100 dark:border-slate-700 px-6 py-2.5 flex justify-around items-center z-30 shadow-lg">
+    <button onclick="switchTab('transaksi')" id="nav-transaksi" class="flex flex-col items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold transition">
+      <i class="fa-solid fa-receipt text-base"></i>
+      <span class="text-[10px]">Transaksi</span>
+    </button>
+    <button onclick="switchTab('laporan')" id="nav-laporan" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition">
+      <i class="fa-solid fa-chart-pie text-base"></i>
+      <span class="text-[10px]">Laporan</span>
+    </button>
+    <button onclick="switchTab('pengaturan')" id="nav-pengaturan" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition">
+      <i class="fa-solid fa-gear text-base"></i>
+      <span class="text-[10px]">Pengaturan</span>
+    </button>
+  </nav>
 
   <!-- DATALIST GLOBAL -->
   <datalist id="listRekening"></datalist>
   <datalist id="listKategori"></datalist>
 
-  <!-- MODAL POP-UP KUSTOMISASI APLIKASI -->
+  <!-- MODAL POP-UP KUSTOMISASI APLIKASI (DENGAN PILIH FILE LOGO PERANGKAT) -->
   <div id="modalCustomization" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="card bg-white dark:bg-slate-800 w-full max-w-sm p-5 rounded-2xl shadow-xl space-y-4">
       <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-700 pb-3">
@@ -168,8 +180,9 @@
           <input type="text" id="set-app-title" value="Money Manager KMW" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
         </div>
         <div>
-          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">URL / Link Logo Aplikasi</label>
-          <input type="text" id="set-logo-url" value="icon.rp.png" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
+          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Pilih Logo dari Perangkat</label>
+          <input type="file" id="set-logo-file" accept="image/*" onchange="previewLocalImage(event)" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2 text-xs file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-600 hover:file:bg-emerald-100 cursor-pointer">
+          <input type="hidden" id="set-logo-base64" value="">
         </div>
       </div>
       <button onclick="saveCustomizationSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-3 rounded-xl text-xs shadow-md transition">Simpan Perubahan</button>
@@ -345,7 +358,6 @@
       }
       if (savedLogo) {
         document.getElementById('app-logo-img').src = savedLogo;
-        document.getElementById('set-logo-url').value = savedLogo;
       }
 
       const now = new Date();
@@ -412,17 +424,17 @@
         document.getElementById(`page-${t}`).classList.add('hidden');
         const nav = document.getElementById(`nav-${t}`);
         if(nav) {
-          nav.className = "px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-700 dark:text-slate-400 transition";
+          nav.className = "flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition";
         }
       });
 
       document.getElementById(`page-${tab}`).classList.remove('hidden');
       const activeNav = document.getElementById(`nav-${tab}`);
       if(activeNav) {
-        activeNav.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 transition";
+        activeNav.className = "flex flex-col items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold transition";
       }
 
-      // Kontrol Tombol FAB Sesuai Menu Aktif
+      // Kontrol Tombol FAB Sesuai Menu Aktif di Bawah Kanan
       const fabBtn = document.getElementById('mainFabBtn');
       const fabIcon = document.getElementById('fabIcon');
       if (tab === 'laporan') {
@@ -443,7 +455,6 @@
       }
     }
 
-    // Aksi Tombol FAB Berdasarkan Menu Aktif
     function handleFabClick() {
       if (currentActiveTab === 'transaksi') {
         openTransaksiModal();
@@ -473,17 +484,29 @@
       document.getElementById('modalCustomization').classList.add('hidden');
     }
 
+    // Fungsi membaca file gambar lokal perangkat dengan izin akses browser
+    function previewLocalImage(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('set-logo-base64').value = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
     function saveCustomizationSettings() {
       const titleText = document.getElementById('set-app-title').value;
-      const logoUrl = document.getElementById('set-logo-url').value;
+      const base64Logo = document.getElementById('set-logo-base64').value;
       
       if (titleText) {
         document.getElementById('app-title-text').innerText = titleText;
         localStorage.setItem('mm_title', titleText);
       }
-      if (logoUrl) {
-        document.getElementById('app-logo-img').src = logoUrl;
-        localStorage.setItem('mm_logo', logoUrl);
+      if (base64Logo) {
+        document.getElementById('app-logo-img').src = base64Logo;
+        localStorage.setItem('mm_logo', base64Logo);
       }
       closeCustomizationModal();
     }
