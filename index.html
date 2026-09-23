@@ -113,10 +113,10 @@
           <div>
             <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Pilih Variasi Warna Gradasi</label>
             <div class="grid grid-cols-2 gap-2">
-              <button onclick="setGradientTheme('linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)', 'Minimalis Abu')" class="p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-gradient-to-tr from-slate-100 to-slate-200 text-xs font-bold text-slate-700 shadow-sm hover:scale-[1.02] transition">Minimalis Abu</button>
-              <button onclick="setGradientTheme('linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)', 'Emerald Minimal')" class="p-3 rounded-xl border border-emerald-200 bg-gradient-to-tr from-emerald-50 to-teal-100 text-xs font-bold text-emerald-800 shadow-sm hover:scale-[1.02] transition">Emerald Clean</button>
-              <button onclick="setGradientTheme('linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)', 'Ocean Blue')" class="p-3 rounded-xl border border-blue-200 bg-gradient-to-tr from-blue-50 to-indigo-100 text-xs font-bold text-blue-800 shadow-sm hover:scale-[1.02] transition">Ocean Blue</button>
-              <button onclick="setGradientTheme('linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%)', 'Sunset Soft')" class="p-3 rounded-xl border border-purple-200 bg-gradient-to-tr from-purple-50 to-pink-100 text-xs font-bold text-purple-800 shadow-sm hover:scale-[1.02] transition">Sunset Soft</button>
+              <button onclick="setGradientTheme('linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)')" class="p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-gradient-to-tr from-slate-100 to-slate-200 text-xs font-bold text-slate-700 shadow-sm hover:scale-[1.02] transition">Minimalis Abu</button>
+              <button onclick="setGradientTheme('linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)')" class="p-3 rounded-xl border border-emerald-200 bg-gradient-to-tr from-emerald-50 to-teal-100 text-xs font-bold text-emerald-800 shadow-sm hover:scale-[1.02] transition">Emerald Clean</button>
+              <button onclick="setGradientTheme('linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)')" class="p-3 rounded-xl border border-blue-200 bg-gradient-to-tr from-blue-50 to-indigo-100 text-xs font-bold text-blue-800 shadow-sm hover:scale-[1.02] transition">Ocean Blue</button>
+              <button onclick="setGradientTheme('linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%)')" class="p-3 rounded-xl border border-purple-200 bg-gradient-to-tr from-purple-50 to-pink-100 text-xs font-bold text-purple-800 shadow-sm hover:scale-[1.02] transition">Sunset Soft</button>
             </div>
           </div>
           <div>
@@ -925,7 +925,7 @@
     }
 
     // --- Pengaturan Tema Gradasi & Custom Aplikasi ---
-    function setGradientTheme(gradientStr, name) {
+    function setGradientTheme(gradientStr) {
       selectedGradient = gradientStr;
       document.body.style.background = gradientStr;
       document.body.style.backgroundAttachment = 'fixed';
