@@ -3,176 +3,339 @@
 <head>
   <base target="_top">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Money Manager KMW</title>
-  <!-- Tailwind CSS & FontAwesome -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Money Manager</title>
+  <!-- FontAwesome untuk Icon -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Chart.js untuk Grafik Statistik -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
-      --app-bg: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      --brand-red: #d90429;
+      --brand-red-hover: #ef233c;
+      --bg-light: #f8f9fa;
       --card-bg: #ffffff;
-      --text-color: #0f172a;
+      --text-dark: #2b2d42;
+      --text-muted: #8d99ae;
+      --border-color: #edf2f4;
     }
-    body { background: var(--app-bg); color: var(--text-color); font-size: 14px; padding-bottom: 90px; min-height: 100vh; background-attachment: fixed; }
-    .card { background-color: var(--card-bg); border-radius: 20px; border: 1px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02); }
-    
-    /* Pengaturan Cetak PDF agar pas di kertas */
+
+    body {
+      background-color: var(--bg-light);
+      color: var(--text-dark);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      font-size: 14px;
+      padding-bottom: 80px;
+    }
+
+    /* Header Minimalis */
+    .header-app {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .brand-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .icon-red { color: var(--brand-red) !important; }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 15px;
+    }
+
+    /* Kartu Minimalis */
+    .card-modern {
+      background: var(--card-bg);
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: var(--text-dark);
+    }
+
+    /* Ringkasan Saldo Atas */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .summary-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .summary-card.saldo {
+      grid-column: span 2;
+      background: var(--brand-red);
+      color: #ffffff;
+      border: none;
+    }
+    .summary-title {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.85;
+      font-weight: 600;
+    }
+    .summary-value {
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin-top: 4px;
+    }
+
+    /* Form & Input */
+    .form-group { margin-bottom: 12px; }
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; }
+    input[type="text"], input[type="number"], input[type="date"], select, textarea {
+      width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 0.9rem; outline: none; background: #fff; box-sizing: border-box;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--brand-red); }
+
+    .btn-red {
+      background-color: var(--brand-red); color: #ffffff; border-radius: 10px; padding: 11px 16px; font-weight: 600; border: none; width: 100%; cursor: pointer; font-size: 0.95rem;
+    }
+    .btn-red:hover { background-color: var(--brand-red-hover); }
+    .btn-secondary { background-color: #e2e8f0; color: #475569; border: none; border-radius: 10px; padding: 10px; width: 100%; font-weight: 600; cursor: pointer; margin-top: 6px; }
+
+    /* Navigasi Bawah Minimalis (6 Tombol dengan Ikon Merah) */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff;
+      border-top: 1px solid var(--border-color); display: flex; justify-content: space-around;
+      padding: 8px 0; max-width: 480px; margin: 0 auto; z-index: 100;
+    }
+    .nav-item {
+      background: none; border: none; color: var(--text-muted); font-size: 0.7rem;
+      display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px;
+    }
+    .nav-item.active { color: var(--brand-red); font-weight: 600; }
+    .nav-item.active .icon-red-nav { transform: scale(1.1); }
+
+    /* Transaksi Per Hari */
+    .day-group { margin-bottom: 14px; }
+    .day-header { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; padding-left: 4px; }
+    .trx-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: #fff; border-radius: 10px; margin-bottom: 6px; border: 1px solid var(--border-color); }
+    .trx-cat { font-weight: 600; font-size: 0.9rem; color: var(--text-dark); }
+    .trx-sub { font-size: 0.75rem; color: var(--text-muted); }
+    .trx-amount { font-weight: 700; font-size: 0.9rem; text-align: right; }
+    .trx-amount.Pemasukan { color: #10b981; }
+    .trx-amount.Pengeluaran { color: #ef4444; }
+    .trx-amount.Transfer { color: #3b82f6; }
+    .trx-actions { display: flex; gap: 4px; margin-left: 8px; }
+    .btn-icon { background: #f1f3f5; border: none; padding: 5px 8px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; color: #495057; }
+
+    .master-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.85rem; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Pengaturan Cetak PDF */
     @media print {
       @page { size: A4 portrait; margin: 15mm; }
-      header, nav, .bottom-nav, button, .fab-container { display: none !important; }
+      header, nav, .bottom-nav, button { display: none !important; }
       body, .container { background: white !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
-      .card { border: none !important; box-shadow: none !important; padding: 0 !important; }
+      .card-modern { border: none !important; box-shadow: none !important; padding: 0 !important; }
     }
   </style>
 </head>
-<body id="appBody">
+<body>
 
-  <!-- Header Modern -->
-  <header class="bg-white/80 backdrop-blur-md border-b border-slate-100 px-5 py-4 sticky top-0 z-20 flex justify-between items-center shadow-sm">
-    <div class="flex items-center gap-2.5">
-      <span class="font-extrabold text-base tracking-tight text-emerald-600"><i class="fa-solid fa-wallet mr-1.5"></i> Money Manager KMW</span>
+  <header class="header-app">
+    <div class="brand-title">
+      <i class="fa-solid fa-wallet icon-red"></i>
+      <span>Money Manager</span>
     </div>
-    <div class="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-xl" id="headerTotalSaldo">Rp 0</div>
+    <div id="headerTotalSaldo" style="font-size: 0.85rem; font-weight: 700; color: var(--brand-red);">Rp 0</div>
   </header>
 
-  <main class="max-w-md mx-auto p-4 space-y-4">
+  <div class="container">
     <input type="hidden" id="editRowIndex" value="">
 
-    <!-- 1. HALAMAN PEMASUKAN -->
-    <div id="page-masuk" class="space-y-4 hidden">
-      <div class="card p-5 space-y-4">
-        <h2 class="font-bold text-sm text-emerald-600" id="title-masuk">Pemasukan Baru</h2>
-        <form onsubmit="handleFormSubmit(event, 'Pemasukan')" class="space-y-3.5">
-          <div><label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Tanggal</label><input type="date" id="masukTanggal" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs"></div>
-          <div><label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Rekening / Akun</label><input list="listRekening" id="masukRek" placeholder="Pilih atau ketik akun baru..." required autocomplete="off" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs"></div>
-          <div><label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Kategori Pemasukan</label><input list="listKategoriMasuk" id="masukKat" placeholder="Pilih atau ketik kategori baru..." required autocomplete="off" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs"></div>
-          <div><label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Jumlah (Rp)</label><input type="number" id="masukJumlah" placeholder="0" min="0" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold"></div>
-          <div><label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Catatan</label><textarea id="masukCatatan" rows="2" placeholder="Catatan opsional..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs"></textarea></div>
-          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-3 rounded-xl text-xs shadow-md transition">Simpan Pemasukan</button>
-          <button type="button" class="w-full bg-slate-300 text-slate-700 font-bold p-2.5 rounded-xl text-xs cancel-edit-btn hidden" onclick="cancelEdit()">Batal Edit</button>
+    <!-- 1. PEMASUKAN -->
+    <div id="page-masuk" class="tab-content">
+      <div class="card-modern">
+        <h3 class="card-title" style="color: #10b981;" id="title-masuk">Pemasukan Baru</h3>
+        <form onsubmit="handleFormSubmit(event, 'Pemasukan')">
+          <div class="form-group"><label>Tanggal</label><input type="date" class="input-tanggal" required></div>
+          <div class="form-group"><label>Rekening Akun</label><input list="list-rekening" class="input-rek-asal" placeholder="Pilih atau ketik akun baru..." required autocomplete="off"></div>
+          <div class="form-group"><label>Kategori</label><input list="list-kategori-masuk" class="input-kategori" placeholder="Pilih atau ketik kategori baru..." required autocomplete="off"></div>
+          <div class="form-group"><label>Jumlah (Rp)</label><input type="number" class="input-jumlah" placeholder="0" min="0" required></div>
+          <div class="form-group"><label>Catatan</label><textarea class="input-catatan" rows="2" placeholder="Catatan opsional..."></textarea></div>
+          <button type="submit" class="btn-red">Simpan Pemasukan</button>
+          <button type="button" class="btn-secondary cancel-edit-btn" style="display:none;" onclick="cancelEdit()">Batal Edit</button>
         </form>
       </div>
     </div>
 
-    <!-- 2. HALAMAN PENGELUARAN -->
-    <div id="page-keluar" class="space-y-4 hidden">
-      <div class="card p-5 space-y-4">
-        <h2 class="font-bold text-sm text-red-600" id="title-keluar">Pengeluaran Baru</h2>
-        <form onsubmit="handleFormSubmit(event, 'Pengeluaran')" class="space-y-3.5">
-          <div><label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Tanggal</label><input type="date" id="keluarTanggal" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs"></div>
-          <div><label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Rekening / Akun</label><input list="listRekening" id="keluarRek" placeholder="Pilih atau ketik akun baru..." required autocomplete="off" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs"></div>
-          <div><label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Kategori Pengeluaran</label><input list="listKategoriKeluar" id="keluarKat" placeholder="Pilih atau ketik kategori baru..." required autocomplete="off" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs"></div>
-          <div><label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Jumlah (Rp)</label><input type="number" id="keluarJumlah" placeholder="0" min="0" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold"></div>
-          <div><label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Catatan</label><textarea id="keluarCatatan" rows="2" placeholder="Catatan opsional..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs"></textarea></div>
-          <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold p-3 rounded-xl text-xs shadow-md transition">Simpan Pengeluaran</button>
-          <button type="button" class="w-full bg-slate-300 text-slate-700 font-bold p-2.5 rounded-xl text-xs cancel-edit-btn hidden" onclick="cancelEdit()">Batal Edit</button>
+    <!-- 2. PENGELUARAN -->
+    <div id="page-keluar" class="tab-content">
+      <div class="card-modern">
+        <h3 class="card-title" style="color: #ef4444;" id="title-keluar">Pengeluaran Baru</h3>
+        <form onsubmit="handleFormSubmit(event, 'Pengeluaran')">
+          <div class="form-group"><label>Tanggal</label><input type="date" class="input-tanggal" required></div>
+          <div class="form-group"><label>Rekening Akun</label><input list="list-rekening" class="input-rek-asal" placeholder="Pilih atau ketik akun baru..." required autocomplete="off"></div>
+          <div class="form-group"><label>Kategori</label><input list="list-kategori-keluar" class="input-kategori" placeholder="Pilih atau ketik kategori baru..." required autocomplete="off"></div>
+          <div class="form-group"><label>Jumlah (Rp)</label><input type="number" class="input-jumlah" placeholder="0" min="0" required></div>
+          <div class="form-group"><label>Catatan</label><textarea class="input-catatan" rows="2" placeholder="Catatan opsional..."></textarea></div>
+          <button type="submit" class="btn-red">Simpan Pengeluaran</button>
+          <button type="button" class="btn-secondary cancel-edit-btn" style="display:none;" onclick="cancelEdit()">Batal Edit</button>
         </form>
       </div>
     </div>
 
-    <!-- 3. HALAMAN TRANSFER -->
-    <div id="page-transfer" class="space-y-4 hidden">
-      <div class="card p-5 space-y-4">
-        <h2 class="font-bold text-sm text-blue-600" id="title-transfer">Transfer Antar Rekening</h2>
-        <form onsubmit="handleFormSubmit(event, 'Transfer')" class="space-y-3.5">
-          <div><label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Tanggal</label><input type="date" id="transferTanggal" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs"></div>
-          <div><label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Dari Rekening (Asal)</label><input list="listRekening" id="transferAsal" placeholder="Pilih rekening asal..." required autocomplete="off" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs"></div>
-          <div><label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Ke Rekening (Tujuan)</label><input list="listRekening" id="transferTujuan" placeholder="Pilih rekening tujuan..." required autocomplete="off" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs"></div>
-          <div><label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Jumlah (Rp)</label><input type="number" id="transferJumlah" placeholder="0" min="0" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold"></div>
-          <div><label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Catatan / Admin</label><textarea id="transferCatatan" rows="2" placeholder="Biaya admin atau keterangan..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs"></textarea></div>
-          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold p-3 rounded-xl text-xs shadow-md transition">Proses Transfer</button>
-          <button type="button" class="w-full bg-slate-300 text-slate-700 font-bold p-2.5 rounded-xl text-xs cancel-edit-btn hidden" onclick="cancelEdit()">Batal Edit</button>
+    <!-- 3. TRANSFER -->
+    <div id="page-transfer" class="tab-content">
+      <div class="card-modern">
+        <h3 class="card-title" style="color: #3b82f6;" id="title-transfer">Transfer Antar Rekening</h3>
+        <form onsubmit="handleFormSubmit(event, 'Transfer')">
+          <div class="form-group"><label>Tanggal</label><input type="date" class="input-tanggal" required></div>
+          <div class="form-group"><label>Dari Rekening (Asal)</label><input list="list-rekening" class="input-rek-asal" placeholder="Pilih rekening asal..." required autocomplete="off"></div>
+          <div class="form-group"><label>Ke Rekening (Tujuan)</label><input list="list-rekening" class="input-rek-tujuan" placeholder="Pilih rekening tujuan..." required autocomplete="off"></div>
+          <div class="form-group"><label>Jumlah (Rp)</label><input type="number" class="input-jumlah" placeholder="0" min="0" required></div>
+          <div class="form-group"><label>Catatan / Admin</label><textarea class="input-catatan" rows="2" placeholder="Biaya admin atau keterangan..."></textarea></div>
+          <button type="submit" class="btn-red">Proses Transfer</button>
+          <button type="button" class="btn-secondary cancel-edit-btn" style="display:none;" onclick="cancelEdit()">Batal Edit</button>
         </form>
       </div>
     </div>
 
-    <!-- 4. HALAMAN TRANSAKSI (Dikelompokkan Per Hari) -->
-    <div id="page-transaksi" class="space-y-4 hidden">
-      <div id="listTransaksiPerHari" class="space-y-4"></div>
+    <!-- 4. TRANSAKSI (PER HARI) -->
+    <div id="page-transaksi" class="tab-content">
+      <div class="card-modern">
+        <h3 class="card-title">Riwayat Transaksi</h3>
+        <div id="listTransaksiPerHari">Memuat data...</div>
+      </div>
     </div>
 
-    <!-- 5. HALAMAN LAPORAN / DASHBOARD STATISTIK -->
-    <div id="page-laporan" class="space-y-4">
-      <div class="grid grid-cols-2 gap-3">
-        <div class="card p-4 bg-emerald-50 border-emerald-100"><p class="text-[10px] uppercase font-bold text-emerald-600">Total Pemasukan</p><p id="sumTotalMasuk" class="text-sm font-extrabold text-emerald-700 mt-1">Rp 0</p></div>
-        <div class="card p-4 bg-red-50 border-red-100"><p class="text-[10px] uppercase font-bold text-red-600">Total Pengeluaran</p><p id="sumTotalKeluar" class="text-sm font-extrabold text-red-700 mt-1">Rp 0</p></div>
-      </div>
-
-      <div class="card p-5 space-y-3 shadow-sm">
-        <h3 class="font-bold text-xs text-slate-400 uppercase tracking-wider">Statistik Keseluruhan</h3>
-        <div class="h-56 relative"><canvas id="chartMasukKeluar"></canvas></div>
-      </div>
-
-      <div class="card p-5 space-y-4 shadow-sm">
-        <div class="flex justify-between items-center">
-          <h2 class="font-bold text-sm text-slate-800">Filter Laporan Waktu</h2>
+    <!-- 5. LAPORAN / DASHBOARD STATISTIK -->
+    <div id="page-laporan" class="tab-content active">
+      <div class="summary-grid">
+        <div class="summary-card saldo">
+          <div class="summary-title">Total Saldo (Keseluruhan)</div>
+          <div class="summary-value" id="val-saldo">Rp 0</div>
         </div>
-        <select id="selectFilterWaktu" onchange="renderLaporan()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-semibold">
-          <option value="semua">Semua Waktu</option>
-          <option value="hari-ini">Hari Ini</option>
-          <option value="minggu-ini">Minggu Ini</option>
-          <option value="bulan-ini" selected>Bulan Ini</option>
-          <option value="tahun-ini">Tahun Ini</option>
-          <option value="kustom">Rentang Kustom</option>
-        </select>
-        <div id="customDateBox" class="hidden grid grid-cols-2 gap-2">
-          <div><label class="text-[10px] text-slate-400">Dari</label><input type="date" id="filterStart" onchange="renderLaporan()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs"></div>
-          <div><label class="text-[10px] text-slate-400">Sampai</label><input type="date" id="filterEnd" onchange="renderLaporan()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs"></div>
+        <div class="summary-card" style="border-left: 4px solid #10b981;">
+          <div class="summary-title" style="color: #10b981;">Pemasukan</div>
+          <div class="summary-value" id="val-masuk" style="color: #10b981; font-size: 1.1rem;">Rp 0</div>
         </div>
-        <div class="grid grid-cols-2 gap-2 pt-2">
-          <button onclick="downloadExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition"><i class="fa-solid fa-file-excel"></i> Unduh Excel</button>
-          <button onclick="downloadPDF()" class="bg-slate-700 hover:bg-slate-800 text-white font-bold p-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition"><i class="fa-solid fa-print"></i> Cetak PDF</button>
+        <div class="summary-card" style="border-left: 4px solid #ef4444;">
+          <div class="summary-title" style="color: #ef4444;">Pengeluaran</div>
+          <div class="summary-value" id="val-keluar" style="color: #ef4444; font-size: 1.1rem;">Rp 0</div>
         </div>
       </div>
+
+      <div class="card-modern text-center">
+        <h3 class="card-title">Statistik Rasio Keuangan</h3>
+        <div style="max-width: 220px; margin: 0 auto;"><canvas id="chartMasukKeluar"></canvas></div>
+      </div>
+
+      <div class="card-modern">
+        <h3 class="card-title">Filter Laporan Waktu</h3>
+        <div class="form-group">
+          <select id="selectFilterWaktu" onchange="renderLaporan()">
+            <option value="semua">Semua Waktu</option>
+            <option value="hari-ini">Hari Ini</option>
+            <option value="minggu-ini">Minggu Ini</option>
+            <option value="bulan-ini" selected>Bulan Ini</option>
+            <option value="tahun-ini">Tahun Ini</option>
+            <option value="kustom">Rentang Kustom</option>
+          </select>
+        </div>
+        <div id="customDateBox" style="display:none; grid-template-columns: 1fr 1fr; gap:8px;" class="form-group">
+          <div><label>Dari</label><input type="date" id="filterStart" onchange="renderLaporan()"></div>
+          <div><label>Sampai</label><input type="date" id="filterEnd" onchange="renderLaporan()"></div>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-top:10px;">
+          <button onclick="downloadExcel()" class="btn-secondary" style="background:#10b981; color:#fff; margin-top:0;"><i class="fa-solid fa-file-excel"></i> Excel</button>
+          <button onclick="downloadPDF()" class="btn-secondary" style="background:#4b5563; color:#fff; margin-top:0;"><i class="fa-solid fa-print"></i> PDF</button>
+        </div>
+      </div>
     </div>
 
-    <!-- 6. HALAMAN PENGATURAN (MASTER DATA CRUD) -->
-    <div id="page-pengaturan" class="space-y-4 hidden">
-      <div class="card p-5 space-y-4">
-        <h2 class="font-bold text-sm text-slate-800">⚙️ Tambah Master Data</h2>
-        <form onsubmit="handleMasterSubmit(event)" class="space-y-3">
-          <div><label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Tipe Master</label><select id="masterJenis" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs"><option value="Rekening">Rekening / Akun</option><option value="KategoriMasuk">Kategori Pemasukan</option><option value="KategoriKeluar">Kategori Pengeluaran</option></select></div>
-          <div><label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Nama Master Data</label><input type="text" id="masterNama" placeholder="Contoh: Dompet Digital / Bonus" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs"></div>
-          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold p-3 rounded-xl text-xs shadow-md transition">+ Tambah Master</button>
+    <!-- 6. PENGATURAN -->
+    <div id="page-pengaturan" class="tab-content">
+      <div class="card-modern">
+        <h3 class="card-title">Pengaturan Master Data</h3>
+        <form onsubmit="handleMasterSubmit(event)">
+          <div class="form-group">
+            <label>Tipe Master</label>
+            <select id="masterJenis">
+              <option value="Rekening">Rekening / Akun</option>
+              <option value="KategoriMasuk">Kategori Pemasukan</option>
+              <option value="KategoriKeluar">Kategori Pengeluaran</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Nama Master Data</label>
+            <input type="text" id="masterNama" placeholder="Contoh: BCA / Gaji" required>
+          </div>
+          <button type="submit" class="btn-red">+ Tambah Master</button>
         </form>
-      </div>
 
-      <div class="card p-5 space-y-4">
-        <h3 class="font-bold text-sm text-slate-800">Daftar Master Data Terdaftar</h3>
-        <div id="masterListContainer" class="space-y-3 text-xs"></div>
+        <hr style="margin: 16px 0; border:0; border-top:1px solid var(--border-color);">
+        <h4 style="font-size: 0.85rem; font-weight: 700; margin-bottom: 10px;">Daftar Master Terdaftar</h4>
+        <div id="masterListContainer" style="font-size: 0.85rem;"></div>
       </div>
     </div>
-  </main>
+  </div>
 
-  <!-- BOTTOM NAVIGATION BAR (6 TOMBOL) -->
-  <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/90 backdrop-blur-md border-t border-slate-100 px-3 py-2 flex justify-around items-center z-30 shadow-lg">
-    <button onclick="switchTab('masuk')" id="nav-masuk" class="flex flex-col items-center gap-1 text-slate-400 hover:text-emerald-600 transition"><i class="fa-solid fa-circle-plus text-base"></i><span class="text-[9px]">Masuk</span></button>
-    <button onclick="switchTab('keluar')" id="nav-keluar" class="flex flex-col items-center gap-1 text-slate-400 hover:text-red-600 transition"><i class="fa-solid fa-circle-minus text-base"></i><span class="text-[9px]">Keluar</span></button>
-    <button onclick="switchTab('transfer')" id="nav-transfer" class="flex flex-col items-center gap-1 text-slate-400 hover:text-blue-600 transition"><i class="fa-solid fa-right-left text-base"></i><span class="text-[9px]">Transfer</span></button>
-    <button onclick="switchTab('transaksi')" id="nav-transaksi" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-700 transition"><i class="fa-solid fa-receipt text-base"></i><span class="text-[9px]">Transaksi</span></button>
-    <button onclick="switchTab('laporan')" id="nav-laporan" class="flex flex-col items-center gap-1 text-emerald-600 font-bold transition"><i class="fa-solid fa-chart-pie text-base"></i><span class="text-[9px]">Laporan</span></button>
-    <button onclick="switchTab('pengaturan')" id="nav-pengaturan" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-700 transition"><i class="fa-solid fa-gear text-base"></i><span class="text-[9px]">Pengaturan</span></button>
+  <!-- BOTTOM NAVIGATION BAR (6 Tombol dengan Ikon Merah) -->
+  <nav class="bottom-nav">
+    <button onclick="switchTab('masuk')" id="nav-masuk" class="nav-item">
+      <i class="fa-solid fa-circle-plus icon-red icon-red-nav text-base"></i><span>Masuk</span>
+    </button>
+    <button onclick="switchTab('keluar')" id="nav-keluar" class="nav-item">
+      <i class="fa-solid fa-circle-minus icon-red icon-red-nav text-base"></i><span>Keluar</span>
+    </button>
+    <button onclick="switchTab('transfer')" id="nav-transfer" class="nav-item">
+      <i class="fa-solid fa-right-left icon-red icon-red-nav text-base"></i><span>Transfer</span>
+    </button>
+    <button onclick="switchTab('transaksi')" id="nav-transaksi" class="nav-item">
+      <i class="fa-solid fa-receipt icon-red icon-red-nav text-base"></i><span>Transaksi</span>
+    </button>
+    <button onclick="switchTab('laporan')" id="nav-laporan" class="nav-item active">
+      <i class="fa-solid fa-chart-pie icon-red icon-red-nav text-base"></i><span>Laporan</span>
+    </button>
+    <button onclick="switchTab('pengaturan')" id="nav-pengaturan" class="nav-item">
+      <i class="fa-solid fa-gear icon-red icon-red-nav text-base"></i><span>Pengaturan</span>
+    </button>
   </nav>
 
   <!-- DATALIST GLOBAL -->
-  <datalist id="listRekening"></datalist>
-  <datalist id="listKategoriMasuk"></datalist>
-  <datalist id="listKategoriKeluar"></datalist>
+  <datalist id="list-rekening"></datalist>
+  <datalist id="list-kategori-masuk"></datalist>
+  <datalist id="list-kategori-keluar"></datalist>
 
-  <!-- JAVASCRIPT UTAMA -->
   <script>
     let GLOBAL_DATA = { transactions: [], rekenings: [], kategoriMasuk: [], kategoriKeluar: [], saldo: 0, totalMasuk: 0, totalKeluar: 0 };
     let myChartInstance = null;
 
     function formatRp(val) { return 'Rp ' + Number(val).toLocaleString('id-ID'); }
 
-    // Set tanggal default hari ini
     const todayStr = new Date().toISOString().split('T')[0];
     ['masukTanggal', 'keluarTanggal', 'transferTanggal'].forEach(id => {
-      const el = document.getElementById(id);
-      if(el) el.value = todayStr;
+      const el = document.getElementById(id); if(el) el.value = todayStr;
     });
 
     window.onload = function() { loadAppData(); };
@@ -185,15 +348,14 @@
     }
 
     function renderApp() {
-      // Header & Summary
       document.getElementById('headerTotalSaldo').innerText = formatRp(GLOBAL_DATA.saldo);
-      document.getElementById('sumTotalMasuk').innerText = formatRp(GLOBAL_DATA.totalMasuk);
-      document.getElementById('sumTotalKeluar').innerText = formatRp(GLOBAL_DATA.totalKeluar);
+      document.getElementById('val-saldo').innerText = formatRp(GLOBAL_DATA.saldo);
+      document.getElementById('val-masuk').innerText = formatRp(GLOBAL_DATA.totalMasuk);
+      document.getElementById('val-keluar').innerText = formatRp(GLOBAL_DATA.totalKeluar);
 
-      // Datalists
-      fillDatalist('listRekening', GLOBAL_DATA.rekenings.map(r => r.nama));
-      fillDatalist('listKategoriMasuk', GLOBAL_DATA.kategoriMasuk.map(k => k.nama));
-      fillDatalist('listKategoriKeluar', GLOBAL_DATA.kategoriKeluar.map(k => k.nama));
+      fillDatalist('list-rekening', GLOBAL_DATA.rekenings.map(r => r.nama));
+      fillDatalist('list-kategori-masuk', GLOBAL_DATA.kategoriMasuk.map(k => k.nama));
+      fillDatalist('list-kategori-keluar', GLOBAL_DATA.kategoriKeluar.map(k => k.nama));
 
       renderTransaksiPerHari(GLOBAL_DATA.transactions);
       renderLaporan();
@@ -201,56 +363,47 @@
     }
 
     function fillDatalist(id, items) {
-      const list = document.getElementById(id);
-      if(!list) return;
+      const list = document.getElementById(id); if(!list) return;
       list.innerHTML = '';
-      items.forEach(item => {
-        const opt = document.createElement('option');
-        opt.value = item;
-        list.appendChild(opt);
-      });
+      items.forEach(item => { const opt = document.createElement('option'); opt.value = item; list.appendChild(opt); });
     }
 
-    // Transaksi Dikelompokkan Per Hari
     function renderTransaksiPerHari(txs) {
-      const container = document.getElementById('listTransaksiPerHari');
-      if(!container) return;
+      const container = document.getElementById('listTransaksiPerHari'); if(!container) return;
       if (!txs || txs.length === 0) {
-        container.innerHTML = '<div class="card p-6 text-center text-slate-400 text-xs">Belum ada catatan transaksi.</div>';
+        container.innerHTML = '<div style="text-align:center; color:var(--text-muted); font-size:0.85rem; padding: 20px;">Belum ada catatan transaksi.</div>';
         return;
       }
 
       const groups = {};
-      txs.forEach(t => {
-        if (!groups[t.tanggal]) groups[t.tanggal] = [];
-        groups[t.tanggal].push(t);
-      });
+      txs.forEach(t => { if (!groups[t.tanggal]) groups[t.tanggal] = []; groups[t.tanggal].push(t); });
 
       let html = '';
       for (const tgl in groups) {
         const d = new Date(tgl);
         const dateLabel = isNaN(d) ? tgl : d.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         
-        html += `<div class="space-y-2"><div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-1">${dateLabel}</div>`;
+        html += `<div class="day-group"><div class="day-header">${dateLabel}</div>`;
         groups[tgl].forEach(item => {
           let desc = item.rekAsal;
           if (item.tipe === 'Transfer') desc = `${item.rekAsal} ➔ ${item.rekTujuan}`;
           if (item.catatan) desc += ` • ${item.catatan}`;
 
-          let colorClass = item.tipe === 'Pemasukan' ? 'text-emerald-600' : item.tipe === 'Pengeluaran' ? 'text-red-600' : 'text-blue-600';
           let sign = item.tipe === 'Pemasukan' ? '+' : item.tipe === 'Pengeluaran' ? '-' : '';
 
           html += `
-            <div class="card p-3.5 flex justify-between items-center shadow-sm">
+            <div class="trx-item">
               <div>
-                <p class="font-bold text-xs text-slate-800">${item.kategori || item.tipe}</p>
-                <p class="text-[11px] text-slate-400 mt-0.5">${desc}</p>
+                <div class="trx-cat">${item.kategori || item.tipe}</div>
+                <div class="trx-sub">${desc}</div>
               </div>
-              <div class="flex items-center gap-3">
-                <span class="text-xs font-extrabold ${colorClass}">${sign} ${formatRp(item.jumlah)}</span>
-                <div class="flex gap-1">
-                  <button onclick="editTx(${item.rowIndex})" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-[10px]" title="Edit"><i class="fa-solid fa-pen"></i></button>
-                  <button onclick="deleteTx(${item.rowIndex})" class="w-7 h-7 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 flex items-center justify-center text-[10px]" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+              <div style="display:flex; align-items:center;">
+                <div class="trx-amount ${item.tipe}">
+                  ${sign} ${formatRp(item.jumlah)}
+                </div>
+                <div class="trx-actions">
+                  <button class="btn-icon" onclick="editTx(${item.rowIndex})" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                  <button class="btn-icon" onclick="deleteTx(${item.rowIndex})" title="Hapus"><i class="fa-solid fa-trash"></i></button>
                 </div>
               </div>
             </div>
@@ -261,27 +414,20 @@
       container.innerHTML = html;
     }
 
-    // Switch Tab Navigasi
     function switchTab(tabName) {
       ['masuk', 'keluar', 'transfer', 'transaksi', 'laporan', 'pengaturan'].forEach(t => {
         const page = document.getElementById('page-' + t);
         const nav = document.getElementById('nav-' + t);
-        if(page) page.classList.add('hidden');
-        if(nav) {
-          nav.className = "flex flex-col items-center gap-1 text-slate-400 hover:text-slate-700 transition";
-        }
+        if(page) page.classList.remove('active');
+        if(nav) nav.classList.remove('active');
       });
 
       const activePage = document.getElementById('page-' + tabName);
       const activeNav = document.getElementById('nav-' + tabName);
-      if(activePage) activePage.classList.remove('hidden');
-      if(activeNav) {
-        let activeColor = tabName === 'masuk' ? 'text-emerald-600 font-bold' : tabName === 'keluar' ? 'text-red-600 font-bold' : tabName === 'transfer' ? 'text-blue-600 font-bold' : 'text-slate-800 font-bold';
-        activeNav.className = `flex flex-col items-center gap-1 ${activeColor} transition`;
-      }
+      if(activePage) activePage.classList.add('active');
+      if(activeNav) activeNav.classList.add('active');
     }
 
-    // Submit Transaksi (Simpan / Edit)
     function handleFormSubmit(event, tipe) {
       event.preventDefault();
       const rowIndex = document.getElementById('editRowIndex').value;
@@ -319,7 +465,6 @@
       }).simpanTransaksi(payload);
     }
 
-    // Edit Transaksi
     function editTx(rowIndex) {
       const tx = GLOBAL_DATA.transactions.find(t => t.rowIndex === rowIndex);
       if(!tx) return;
@@ -332,7 +477,7 @@
         document.getElementById('masukKat').value = tx.kategori;
         document.getElementById('masukJumlah').value = tx.jumlah;
         document.getElementById('masukCatatan').value = tx.catatan;
-        document.querySelectorAll('.cancel-edit-btn').forEach(b => b.classList.remove('hidden'));
+        document.querySelectorAll('.cancel-edit-btn').forEach(b => b.style.display = 'block');
       } else if(tx.tipe === 'Pengeluaran') {
         switchTab('keluar');
         document.getElementById('keluarTanggal').value = tx.tanggal;
@@ -340,7 +485,7 @@
         document.getElementById('keluarKat').value = tx.kategori;
         document.getElementById('keluarJumlah').value = tx.jumlah;
         document.getElementById('keluarCatatan').value = tx.catatan;
-        document.querySelectorAll('.cancel-edit-btn').forEach(b => b.classList.remove('hidden'));
+        document.querySelectorAll('.cancel-edit-btn').forEach(b => b.style.display = 'block');
       } else if(tx.tipe === 'Transfer') {
         switchTab('transfer');
         document.getElementById('transferTanggal').value = tx.tanggal;
@@ -348,13 +493,13 @@
         document.getElementById('transferTujuan').value = tx.rekTujuan;
         document.getElementById('transferJumlah').value = tx.jumlah;
         document.getElementById('transferCatatan').value = tx.catatan;
-        document.querySelectorAll('.cancel-edit-btn').forEach(b => b.classList.remove('hidden'));
+        document.querySelectorAll('.cancel-edit-btn').forEach(b => b.style.display = 'block');
       }
     }
 
     function cancelEdit() {
       document.getElementById('editRowIndex').value = '';
-      document.querySelectorAll('.cancel-edit-btn').forEach(b => b.classList.add('hidden'));
+      document.querySelectorAll('.cancel-edit-btn').forEach(b => b.style.display = 'none');
     }
 
     function deleteTx(rowIndex) {
@@ -366,11 +511,10 @@
       }
     }
 
-    // Filter Laporan & Grafik Statistik
     function renderLaporan() {
       const mode = document.getElementById('selectFilterWaktu').value;
       const customBox = document.getElementById('customDateBox');
-      if(customBox) customBox.classList.toggle('hidden', mode !== 'kustom');
+      if(customBox) customBox.style.display = (mode === 'kustom') ? 'grid' : 'none';
 
       let filtered = GLOBAL_DATA.transactions;
       const now = new Date();
@@ -425,7 +569,6 @@
       });
     }
 
-    // Pengaturan Master Data
     function handleMasterSubmit(event) {
       event.preventDefault();
       const jenis = document.getElementById('masterJenis').value;
@@ -443,17 +586,16 @@
       const container = document.getElementById('masterListContainer');
       if(!container) return;
 
-      let html = '<div class="space-y-2">';
+      let html = '';
       GLOBAL_DATA.rekenings.forEach(r => {
-        html += `<div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-xl border border-slate-100"><span><b>Rekening:</b> ${r.nama}</span><div class="flex gap-1"><button onclick="editMaster(${r.rowIndex}, '${r.nama}')" class="px-2 py-1 bg-white border border-slate-200 rounded-lg text-[10px]">Edit</button><button onclick="deleteMaster(${r.rowIndex})" class="px-2 py-1 bg-red-50 text-red-600 rounded-lg text-[10px]">Hapus</button></div></div>`;
+        html += `<div class="master-item"><span><b>Rekening:</b> ${r.nama}</span><div style="display:flex; gap:4px;"><button class="btn-icon" onclick="editMaster(${r.rowIndex}, '${r.nama}')">Edit</button><button class="btn-icon" style="color:#ef4444;" onclick="deleteMaster(${r.rowIndex})">Hapus</button></div></div>`;
       });
       GLOBAL_DATA.kategoriMasuk.forEach(k => {
-        html += `<div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-xl border border-slate-100"><span><b>Kat. Masuk:</b> ${k.nama}</span><div class="flex gap-1"><button onclick="editMaster(${k.rowIndex}, '${k.nama}')" class="px-2 py-1 bg-white border border-slate-200 rounded-lg text-[10px]">Edit</button><button onclick="deleteMaster(${k.rowIndex})" class="px-2 py-1 bg-red-50 text-red-600 rounded-lg text-[10px]">Hapus</button></div></div>`;
+        html += `<div class="master-item"><span><b>Kat. Masuk:</b> ${k.nama}</span><div style="display:flex; gap:4px;"><button class="btn-icon" onclick="editMaster(${k.rowIndex}, '${k.nama}')">Edit</button><button class="btn-icon" style="color:#ef4444;" onclick="deleteMaster(${k.rowIndex})">Hapus</button></div></div>`;
       });
       GLOBAL_DATA.kategoriKeluar.forEach(k => {
-        html += `<div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-xl border border-slate-100"><span><b>Kat. Keluar:</b> ${k.nama}</span><div class="flex gap-1"><button onclick="editMaster(${k.rowIndex}, '${k.nama}')" class="px-2 py-1 bg-white border border-slate-200 rounded-lg text-[10px]">Edit</button><button onclick="deleteMaster(${k.rowIndex})" class="px-2 py-1 bg-red-50 text-red-600 rounded-lg text-[10px]">Hapus</button></div></div>`;
+        html += `<div class="master-item"><span><b>Kat. Keluar:</b> ${k.nama}</span><div style="display:flex; gap:4px;"><button class="btn-icon" onclick="editMaster(${k.rowIndex}, '${k.nama}')">Edit</button><button class="btn-icon" style="color:#ef4444;" onclick="deleteMaster(${k.rowIndex})">Hapus</button></div></div>`;
       });
-      html += '</div>';
       container.innerHTML = html;
     }
 
@@ -476,7 +618,6 @@
       }
     }
 
-    // Export Excel & PDF
     function downloadExcel() {
       let csv = 'Tanggal,Tipe,Rekening Asal,Rekening Tujuan,Kategori,Jumlah,Catatan\n';
       GLOBAL_DATA.transactions.forEach(t => {
