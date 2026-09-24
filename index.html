@@ -812,14 +812,13 @@
       });
     }
 
-    function renderLaporanView() {
-      const filtered = filterDataByPeriod();
-      const summaryList = document.getElementById('summaryRekeningList');
-      
+          function renderLaporanView() {
+      // SALDO UTAMA: Menghitung saldo kumulatif terakhir (seluruh waktu) untuk ditampilkan di Ringkasan Rekening
       const saldoMap = {};
       dbMaster.rekening.forEach(r => saldoMap[r] = 0);
 
-      filtered.forEach(tx => {
+      // Hitung dari seluruh mutasi tanpa filter tanggal agar selalu jadi saldo terakhir/real-time
+      dbTransaksi.forEach(tx => {
         const amt = Number(tx.jumlah);
         if(tx.tipe === 'Pemasukan') {
           if(saldoMap[tx.rekAsal] !== undefined) saldoMap[tx.rekAsal] += amt;
@@ -831,6 +830,7 @@
         }
       });
 
+      const summaryList = document.getElementById('summaryRekeningList');
       let html = '';
       dbMaster.rekening.forEach(rek => {
         const saldo = saldoMap[rek] || 0;
@@ -846,10 +846,14 @@
       });
 
       summaryList.innerHTML = html || '<p class="text-xs text-slate-400 italic">Belum ada rekening.</p>';
-      renderLaporanCharts(filtered);
+
+      // Grafik tetap mengikuti filter periode yang dipilih
+      const filteredForChart = filterDataByPeriod();
+      renderLaporanCharts(filteredForChart);
     }
 
     function getGroupedMonthlyMutasi(rekName) {
+      // Urutkan transaksi dari yang terlama ke terbaru untuk kalkulasi saldo berjalan (running balance)
       const sortedAll = [...dbTransaksi].sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
       const monthlyMap = {};
 
@@ -890,6 +894,7 @@
       let runningSaldo = 0;
       const sortedMonthKeys = Object.keys(monthlyMap).sort();
 
+      // Menghitung Saldo Awal dan Saldo Akhir secara akurat per bulan berurutan
       sortedMonthKeys.forEach(mKey => {
         const mData = monthlyMap[mKey];
         mData.openingBalance = runningSaldo;
@@ -902,6 +907,7 @@
         
         mData.totalMasuk = mMasuk;
         mData.totalKeluar = mKeluar;
+        // Saldo Akhir bulan ini = Saldo Awal + Total Masuk - Total Keluar
         runningSaldo = mData.openingBalance + mMasuk - mKeluar;
         mData.closingBalance = runningSaldo;
       });
